@@ -1,0 +1,16 @@
+directories:
+  output: C:\f7-cordova-test\platforms\electron\build
+  buildResources: C:\f7-cordova-test\platforms\electron\build-res
+  app: C:\f7-cordova-test\platforms\electron\www
+appId: io.cordova.hellocordova
+productName: HelloCordova
+electronVersion: 14.2.9
+electronDownload:
+  version: 14.2.9
+win:
+  icon: installer.png
+  target:
+    - target: nsis
+      arch:
+        - x64
+files: []

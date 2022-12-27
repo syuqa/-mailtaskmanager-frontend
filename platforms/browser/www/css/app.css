@@ -1,0 +1,59 @@
+/* iOS Cordova Tweak */
+.device-cordova.device-ios {
+  height: 100vh;
+}
+
+/* Your app custom styles here */
+
+.hover-op-0:hover {
+  opacity: 0 !important;
+}
+
+.hover-hover-op-1:hover {
+  opacity: 0.1 !important;
+}
+
+.hover-op-2:hover {
+  opacity: 0.2 !important;
+}
+
+.hover-op-3:hover {
+  opacity: 0.3 !important;
+}
+
+.hover-op-4:hover {
+  opacity: 0.4 !important;
+}
+
+.hover-op-5:hover {
+  opacity: 0.5 !important;
+}
+
+.hover-op-6:hover {
+  opacity: 0.6 !important;
+}
+
+.hover-op-7:hover {
+  opacity: 0.7 !important;
+}
+
+.hover-op-8:hover {
+  opacity: 0.8 !important;
+}
+
+.hover-op-9:hover {
+  opacity: 0.9 !important;
+}
+
+.hover-op:hover {
+  opacity: 1 !important;
+}
+
+.login-screen-content {
+  margin-top: auto;
+  margin-bottom: auto;
+  height: auto;
+  max-height: 100%;
+  width: 100%;
+  background: #e7434300;
+}

@@ -1,0 +1,115 @@
+<div class="page" style="background-image: none;">
+	<!--div class="navbar">
+		<div class="navbar-bg"></div>
+		<div class="navbar-inner">
+		  <div class="left"><a href="/home/"><span class="material-icons">arrow_back</span></a></div>
+		  <div class="title current-day">Profile</div>
+		  <div class="right"></div>
+		</div>
+	  </div-->
+	  <div class="navbar navbar-transparent">
+		<div class="navbar-bg"></div>
+		<div class="navbar-inner sliding">
+		  <div class="left">
+			<a class="link back"><a href="/home/"><span class="material-icons">arrow_back</span></a></a>
+		  </div>
+		  <div class="title">Profile</div>
+		</div>
+	  </div>
+	<!-- Контент -->
+	<div class="page-content profile">
+		<!-- Иконка + номер телефона -->	  
+		<center style="margin-top: 30px;">
+			<div ><a id="profile_avatar" class="actions-open link" href="#" data-actions=".avatar"><span class="material-icons" style="color: black;opacity: 0.8;font-size: 48px;">account_circle</span></a></div>
+			<h3 class="profile-user-name" style="color: brown;margin-top: 5px;">USERAME</h3>
+			<div style="border-width: 1px;border-style: double;border-color: #00000012;margin-top: 5px;width: 60%;"></div>
+			<div class="profile-user-id" style="margin-top: 5px;opacity: 0.5;">ID: 00</div>
+		</center>
+		<!--Почтовый клиент начало-->
+		<div class="data-table data-table-init card">
+            <!-- Card header -->
+            <div class="card-header">
+              <!-- Default table header -->
+              <div class="data-table-header">
+                <!-- Default table title -->
+                <div class="data-table-title">Email connector</div>
+                <!-- Default table actions -->
+                <div class="data-table-actions">
+                  <a class="link icon-only refresh-mail-connector-list">
+                    <span class="material-icons">refresh</span>
+                  </a>
+                  <a class="link icon-only add-mail-connector connector-popup">
+                    <span class="material-icons">add</span>
+                  </a>
+                </div>
+              </div>
+              <!-- Selected table header -->
+              <div class="data-table-header-selected">
+                <!-- Selected table title -->
+                <div class="data-table-title-selected"><span class="data-table-selected-count"></span> items selected</div>
+                <!-- Selected table actions -->
+                <div class="data-table-actions">
+					<!--a class="link icon-only">
+						<i class="icon f7-icons if-not-md">ellipsis_vertical_circle</i>
+						<i class="icon material-icons md-only">more_vert</i>
+					  </a-->
+                  <a class="link icon-only delete-import-link">
+					<i class="icon material-icons md-only">delete</i>
+                    <i class="icon f7-icons if-not-md">trash</i>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="card-content">
+              <table class="savelist mail-connector-list">
+                <thead>
+                  <tr>
+                    <th class="checkbox-cell">
+                      <label class="checkbox">
+                        <input type="checkbox" />
+                        <i class="icon-checkbox"></i>
+                      </label>
+                    </th>
+					<th class="label-cell">Mail server</th>
+					<th class="label-cell">Email arderss</th>
+					<th class="label-cell">Model connector</th>
+					<th class="actions-cell">Enable</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+					<tr>
+						<td class="checkbox-cell">
+						  <label class="checkbox">
+							<input type="checkbox" />
+							<i class="icon-checkbox"></i>
+						  </label>
+						</td>
+						<td class="label-cell">-</td>
+						<td class="label-cell">-</td>
+						<td class="label-cell">-</td>
+						<td class="actions-cell">
+							<label class="toggle toggle-init color-green">
+								<input type="checkbox" />
+								<span class="toggle-icon"></span>
+							  </label>
+						</td>
+						<td class="actions-cell">
+						  <a class="link icon-only">
+							<i class="icon f7-icons if-not-md">square_pencil</i>
+							<i class="icon material-icons md-only">edit</i>
+						  </a>
+						  <!--a class="link icon-only">
+							<i class="icon f7-icons if-not-md">trash</i>
+							<i class="icon material-icons md-only">delete</i>
+						  </a-->
+						</td>
+					  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+		<!--Почтовый клиент конец-->
+
+	</div>
+</div>

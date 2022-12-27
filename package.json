@@ -1,0 +1,48 @@
+{
+  "name": "my-app",
+  "private": true,
+  "version": "1.0.0",
+  "description": "My App",
+  "repository": "",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "npm run serve",
+    "serve": "http-server ./www/ -o -c 1 -a localhost -p 8080",
+    "build-cordova": "node ./build/build.js && cd cordova && cordova build",
+    "cordova-electron": "node ./build/build.js && cd cordova && cordova run electron --nobuild",
+    "postinstall": "cpy --flat ./node_modules/framework7-icons/fonts/*.* ./www/fonts/ && cpy --flat ./node_modules/material-icons/iconfont/*.* ./www/fonts/ && cpy --flat ./node_modules/framework7/*.js ./www/framework7 && cpy --flat ./node_modules/framework7/*.css ./www/framework7 && cpy --flat ./node_modules/framework7/*.map ./www/framework7"
+  },
+  "browserslist": [
+    "IOS >= 13",
+    "Safari >= 13",
+    "last 5 Chrome versions",
+    "last 5 Firefox versions",
+    "Samsung >= 12"
+  ],
+  "dependencies": {
+    "cordova-plugin-vpn": "^1.0.0",
+    "dom7": "^4.0.4",
+    "firebase": "^9.14.0",
+    "framework7": "^7.0.8",
+    "framework7-icons": "^5.0.5",
+    "material-icons": "^1.12.0",
+    "skeleton-elements": "^4.0.1",
+    "swiper": "^8.4.4",
+    "template7": "^1.4.2"
+  },
+  "devDependencies": {
+    "cordova-browser": "^6.0.0",
+    "cordova-electron": "^3.1.0",
+    "cpy": "^9.0.1",
+    "cpy-cli": "^4.2.0",
+    "http-server": "^14.1.1",
+    "rimraf": "^3.0.2",
+    "firebase": "^9.14.0"
+  },
+  "cordova": {
+    "platforms": [
+      "electron",
+      "browser"
+    ]
+  }
+}
