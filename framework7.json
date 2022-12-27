@@ -3,7 +3,7 @@
   "type": [
     "cordova"
   ],
-  "name": "My App",
+  "name": "Mail-TaskManager",
   "framework": "core",
   "template": "single-view",
   "bundler": false,

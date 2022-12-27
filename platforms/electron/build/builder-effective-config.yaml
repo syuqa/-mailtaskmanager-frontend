@@ -2,8 +2,8 @@ directories:
   output: C:\f7-cordova-test\platforms\electron\build
   buildResources: C:\f7-cordova-test\platforms\electron\build-res
   app: C:\f7-cordova-test\platforms\electron\www
-appId: io.cordova.hellocordova
-productName: HelloCordova
+appId: io.cordova.taskmanager
+productName: MailTaskManager
 electronVersion: 14.2.9
 electronDownload:
   version: 14.2.9

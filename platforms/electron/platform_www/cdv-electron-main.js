@@ -27,8 +27,33 @@ const {
     protocol,
     ipcMain,
     Tray,
-    Menu
+    Menu,
+    autoUpdater, 
+    dialog 
 } = require('electron');
+
+const server = 'https://mail-task-manager.vercel.app'
+const url = `${server}/update/${process.platform}/${app.getVersion()}`
+
+autoUpdater.setFeedURL({ url })
+autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+    const dialogOpts = {
+      type: 'info',
+      buttons: ['Restart', 'Later'],
+      title: 'Application Update',
+      message: process.platform === 'win32' ? releaseNotes : releaseName,
+      detail: 'A new version has been downloaded. Restart the application to apply the updates.'
+    }
+  
+    dialog.showMessageBox(dialogOpts).then((returnValue) => {
+      if (returnValue.response === 0) autoUpdater.quitAndInstall()
+    })
+  })
+autoUpdater.on('error', message => {
+    console.error('There was a problem updating the application')
+    console.error(message)
+  })
+
 // Electron settings from .json file.
 const cdvElectronSettings = require('./cdv-electron-settings.json');
 const reservedScheme = require('./cdv-reserved-scheme.json');
@@ -78,7 +103,7 @@ function createWindow () {
     //browserWindowOpts.webPreferences.contextIsolation = false;
 
     mainWindow = new BrowserWindow(browserWindowOpts);
-
+    mainWindow.setMenuBarVisibility(false)
     // Load a local HTML file or a remote URL.
     const cdvUrl = cdvElectronSettings.browserWindowInstance.loadURL.url;
     const loadUrl = cdvUrl.includes('://') ? cdvUrl : `${basePath}/${cdvUrl}`;
@@ -133,7 +158,7 @@ function createTray() {
     ]);
   
     const tray = new Tray(appIcon);
-    tray.setToolTip('Shortcutter');
+    tray.setToolTip('Диспечер задач');
     tray.setContextMenu(contextMenu);
     tray.on('click', () => {
       BrowserWindow.getAllWindows().shift().show();
@@ -196,6 +221,10 @@ app.on('activate', () => {
 app.whenReady().then(() => {
     createWindow();
     createTray();
+    setInterval(() => {
+        autoUpdater.checkForUpdates()
+      }, 60000)
+
   });
   
   app.on('activate', () => {

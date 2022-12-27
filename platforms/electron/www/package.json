@@ -1,14 +1,14 @@
 {
   "main": "cdv-electron-main.js",
-  "name": "io.cordova.hellocordova",
-  "displayName": "HelloCordova",
+  "name": "io.cordova.taskmanager",
+  "displayName": "MailTaskManager",
   "version": "1.0.0",
   "description": "Sample Apache Cordova App",
   "homepage": "https://cordova.apache.org",
   "license": "Apache-2.0",
   "author": {
     "name": "Apache Cordova Team",
-    "email": "dev@cordova.apache.org"
+    "email": "k5.45mm@gmail.com"
   },
   "dependencies": {
     "electron-devtools-installer": "^3.2.0"

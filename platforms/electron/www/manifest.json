@@ -3,9 +3,9 @@
   "display": "standalone",
   "orientation": "any",
   "start_url": "index.html",
-  "name": "HelloCordova",
-  "short_name": "HelloCordova",
-  "version": "io.cordova.hellocordova",
+  "name": "MailTaskManager",
+  "short_name": "MailTaskManager",
+  "version": "io.cordova.taskmanager",
   "description": "Sample Apache Cordova App",
   "author": "Apache Cordova Team",
   "theme_color": "#fff"
