@@ -25,7 +25,7 @@ function task_list(page, date){
                                             var event = ''
                                             element.day_actions.forEach(el => {
                                                 event += `
-                                                <div class="chip chip-outline">
+                                                <div class="chip chip-outline" style="background: ${el.events.create_event.background}">
                                                     <div class="chip-label">${el.events.create_event.event}</div>
                                                 </div>`
                                             });
@@ -113,7 +113,7 @@ function history(index){
                 <div class="timeline-item-date custom-timlie-datetime">${dt.toLocaleTimeString("ru-RU", options)}</div>
                 <div class="timeline-item-divider"></div>
                 <div class="timeline-item-content" style="width: 100%;">
-                    <div class="chip chip-outline" style="margin-bottom: 10px;">
+                    <div class="chip chip-outline" style="margin-bottom: 10px;background: ${element.events.create_event.background}">
                         <div class="chip-label">${element.events.create_event.event}</div>
                     </div>
                     <div class="card"></div>
@@ -146,6 +146,13 @@ function history(index){
         }
         content.find('.timeline').append(timeline)
     }
+    content.find('.timeline').append(`
+        <div class="timeline-item">
+            <div class="timeline-item-date custom-timlie-datetime"></div>
+            <div class="timeline-item-divider"></div>
+            <div class="timeline-item-content" style="width: 100%;"></div>
+        </div>
+        `)
     return content.html()
 }
 

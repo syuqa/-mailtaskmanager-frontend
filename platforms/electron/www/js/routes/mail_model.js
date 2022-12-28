@@ -80,7 +80,9 @@ function filters(filtr, attr_list, method_list, fresh){
   return filter_list
 }
 
-function create_actions_param(action, enable_action, values, simple){
+function create_actions_param(action, current_rule, simple){
+  const enable_action = current_rule.action
+  const values = current_rule.action_parameters 
   const content = $('<div></div>')
   for (const [index, value] of action.entries()){
     const list = $(`<div class="list no-hairlines-md event-list ${enable_action.includes(value.id) ? '':'disable'}" action="${value.id}">
@@ -100,6 +102,34 @@ function create_actions_param(action, enable_action, values, simple){
                   <div class="item-input-wrap ${simple}">
                     <input ${(value.validate) ? 'class="validate"':''} type="text" name="${value.name}" placeholder="${value.placeholder}" value="${(values[action_name] && values[action_name][value.name]) ? values[action_name][value.name]: ''}" />
                     <span class="input-clear-button"></span>
+                  </div>
+                </div>
+              </li>
+          `)
+      }else if (value.type == 'color'){
+        list.find('ul').append(`
+                <li class="item-content item-input">
+                <div class="item-media">
+                  <i class="icon demo-list-icon material-icons" id="${value.name}-color-picker-palette-value-${current_rule.pk}">text_format</i>
+                </div>
+                <div class="item-inner">
+                  <div class="item-title item-label">${value.description}</div>
+                  <div class="item-input-wrap item-color ${simple}">
+                    <input ${(value.validate) ? 'class="validate"':''} type="text" placeholder="${value.placeholder}" name="${value.name}" value="${(values[action_name] && values[action_name][value.name]) ? values[action_name][value.name]: ''}" readonly="readonly" id="${value.name}-color-picker-palette-${current_rule.pk}" />
+                  </div>
+                </div>
+              </li>
+          `)
+      }else if (value.type == 'checkbox'){
+        list.find('ul').append(`
+                <li class="item-content item-input">
+                <div class="item-media">
+                  <i class="icon material-icons demo-list-icon">text_format</i>
+                </div>
+                <div class="item-inner">
+                  <div class="item-title item-label">${value.description}</div>
+                  <div class="item-input-wrap ${simple}">
+                    <input name="${value.name}" type="checkbox" ${(values[action_name] && values[action_name][value.name]) ? (values[action_name][value.name]) ? 'checked="true"': '': ''}"/>
                   </div>
                 </div>
               </li>
@@ -867,7 +897,7 @@ routes.push(
                             </ul>
                           </div>
                           
-                          ${create_actions_param(actions, current_rule.action, current_rule.action_parameters, simple)}
+                          ${create_actions_param(actions, current_rule, simple)}
 
                           <div class="list no-hairlines-md fiter-list">
                             <div class="block-header" style="margin-left: 0;margin-right: -2px;">Фильтры
@@ -890,6 +920,36 @@ routes.push(
                         validate(popup.$el)
                       },
                       opened: function (popup) {
+                        // Выбор цвета
+                        popup.$el.find('.item-color input').forEach(function(el){
+                          let name = el.name
+                          console.log(el.name, current_rule.pk, el.value)
+                          const colorPicker = app.colorPicker.create({
+                            inputEl: `#${name}-color-picker-palette-${current_rule.pk}`,
+                            targetEl: `#${name}-color-picker-palette-value-${current_rule.pk}`,
+                            targetElSetBackgroundColor: true,
+                            modules: ['palette'],
+                            openIn: 'auto',
+                            openInPhone: 'sheet',
+                            palette: [
+                              ['#FFEBEE', '#FFCDD2', '#EF9A9A', '#E57373', '#EF5350', '#F44336', '#E53935', '#D32F2F', '#C62828', '#B71C1C'],
+                              ['#F3E5F5', '#E1BEE7', '#CE93D8', '#BA68C8', '#AB47BC', '#9C27B0', '#8E24AA', '#7B1FA2', '#6A1B9A', '#4A148C'],
+                              ['#E8EAF6', '#C5CAE9', '#9FA8DA', '#7986CB', '#5C6BC0', '#3F51B5', '#3949AB', '#303F9F', '#283593', '#1A237E'],
+                              ['#E1F5FE', '#B3E5FC', '#81D4FA', '#4FC3F7', '#29B6F6', '#03A9F4', '#039BE5', '#0288D1', '#0277BD', '#01579B'],
+                              ['#E0F2F1', '#B2DFDB', '#80CBC4', '#4DB6AC', '#26A69A', '#009688', '#00897B', '#00796B', '#00695C', '#004D40'],
+                              ['#F1F8E9', '#DCEDC8', '#C5E1A5', '#AED581', '#9CCC65', '#8BC34A', '#7CB342', '#689F38', '#558B2F', '#33691E'],
+                              ['#FFFDE7', '#FFF9C4', '#FFF59D', '#FFF176', '#FFEE58', '#FFEB3B', '#FDD835', '#FBC02D', '#F9A825', '#F57F17'],
+                              ['#FFF3E0', '#FFE0B2', '#FFCC80', '#FFB74D', '#FFA726', '#FF9800', '#FB8C00', '#F57C00', '#EF6C00', '#E65100'],
+                            ],
+                            value: {
+                              hex: (el.value) ? el.value: '#ffffff'
+                            },
+                            formatValue: function (value) {
+                              return value.hex;
+                            },
+                          });
+                          console.log(colorPicker)
+                          })
                         // Выбор действий
                         app.smartSelect.create(
                           { 

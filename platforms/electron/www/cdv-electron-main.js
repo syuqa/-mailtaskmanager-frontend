@@ -32,7 +32,7 @@ const {
     dialog 
 } = require('electron');
 
-const server = 'https://mail-task-manager.vercel.app'
+const server = 'https://mailtaskmanager-self.vercel.app'
 const url = `${server}/update/${process.platform}/${app.getVersion()}`
 
 autoUpdater.setFeedURL({ url })
@@ -50,6 +50,7 @@ autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
     })
   })
 autoUpdater.on('error', message => {
+    console.error(`Repo: ${url}`)
     console.error('There was a problem updating the application')
     console.error(message)
   })
