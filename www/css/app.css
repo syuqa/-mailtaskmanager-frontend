@@ -103,3 +103,11 @@
   width: 110px !important;
   text-align: center;
 }
+
+.jsoneditor-frame {
+  display: none;
+}
+
+.jsoneditor-poweredBy {
+  display: none;
+}

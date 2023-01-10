@@ -90,7 +90,9 @@ function create_actions_param(action, current_rule, simple){
                     <ul class="action_params" action="${value.id}" index="${index}"></ul>`)
     const action_name = value.name
     const parameters = value.parameters
+    const enable = enable_action.includes(value.id)
       for (const [index, value] of parameters.entries()){
+        let valid = (enable) ? (value.validate) ? 'validate': '': (value.validate) ? 'validates': '' 
         if (value.type == 'text'){
             list.find('ul').append(`
                 <li class="item-content item-input">
@@ -100,7 +102,7 @@ function create_actions_param(action, current_rule, simple){
                 <div class="item-inner">
                   <div class="item-title item-label">${value.description}</div>
                   <div class="item-input-wrap ${simple}">
-                    <input ${(value.validate) ? 'class="validate"':''} type="text" name="${value.name}" placeholder="${value.placeholder}" value="${(values[action_name] && values[action_name][value.name]) ? values[action_name][value.name]: ''}" />
+                    <input class="${valid}" type="text" name="${value.name}" placeholder="${value.placeholder}" value="${(values[action_name] && values[action_name][value.name]) ? values[action_name][value.name]: ''}" />
                     <span class="input-clear-button"></span>
                   </div>
                 </div>
@@ -115,7 +117,7 @@ function create_actions_param(action, current_rule, simple){
                 <div class="item-inner">
                   <div class="item-title item-label">${value.description}</div>
                   <div class="item-input-wrap item-color ${simple}">
-                    <input ${(value.validate) ? 'class="validate"':''} type="text" placeholder="${value.placeholder}" name="${value.name}" value="${(values[action_name] && values[action_name][value.name]) ? values[action_name][value.name]: ''}" readonly="readonly" id="${value.name}-color-picker-palette-${current_rule.pk}" />
+                    <input class="${valid}" type="text" placeholder="${value.placeholder}" name="${value.name}" value="${(values[action_name] && values[action_name][value.name]) ? values[action_name][value.name]: ''}" readonly="readonly" id="${value.name}-color-picker-palette-${current_rule.pk}" />
                   </div>
                 </div>
               </li>
@@ -962,15 +964,32 @@ routes.push(
                                   popup.$el.find('.event-list').forEach(function(el){
                                     let current = $(el).attr('action')
                                     if (enable.includes(current)){
+                                      // показываем параметы
                                       if ($(el).hasClass('disable')){
                                         $(el).removeClass('disable')
                                       }
+                                      // включаем валидацию
+                                      let validate = $(el).find('.validates')
+                                      console.log(validate)
+                                      if (validate){
+                                          validate.removeClass('validates')
+                                          validate.addClass('validate')
+                                      }
                                     }else{
+                                      // скрываем параметры
                                       if (!$(el).hasClass('disable')){
                                         $(el).addClass('disable')
                                       }
+                                      // выключаем валидацию
+                                      let validate = $(el).find('.validate')
+                                      console.log(validate)
+                                      if (validate){
+                                          validate.removeClass('validate')
+                                          validate.addClass('validates')
+                                      }
                                     }
                                   })
+                                  validate(popup.$el)
                                 }
                               }
                           });

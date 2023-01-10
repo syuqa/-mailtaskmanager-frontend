@@ -11,6 +11,7 @@ pids
 *.pid
 *.seed
 *.pid.lock
+*.exe
 
 # Dependency directories
 node_modules/
@@ -39,6 +40,11 @@ cordova/platforms/
 cordova/plugins/
 cordova/www/
 
+platforms/electron/build/
+platforms/electron/build/
+platforms/windows/
 
+release/
 
-
+.vercel
+.vscode

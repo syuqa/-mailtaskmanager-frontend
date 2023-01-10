@@ -57,3 +57,7 @@
   width: 100%;
   background: #e7434300;
 }
+
+.jsoneditor-search {
+  display: none !important;  
+}

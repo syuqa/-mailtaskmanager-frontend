@@ -1,13 +1,12 @@
-const shell = require('electron').shell;
-
 var $ = Dom7;
+
 function app_api(path){
   return new URL(path, 'https://syu-developer-02.ru/').href 
 }
+
 function app_ws(path){
   return new URL(path, 'ws://syu-developer-02.ru/').href 
 }
-
 
   // проверка заполнености обязательных полей
 function validate(el){
@@ -98,6 +97,12 @@ function ErrorProcessorRequest(request){
     console.log('navaite login')
     navigate('/login/')
 
+  }else if (request.status == 500){
+    navigate('/bad-gateway/', false)
+
+  }else if (request.status == 502){
+    navigate('/bad-gateway/', false)
+  
   }else if (request.status == 0){
     navigate('/not-connection/', false)
   }
@@ -189,7 +194,8 @@ $(document).on("click", ".login-button", function() {
           "Authorization": "Token " + response_json.auth_token
         }
         })
-      navigate('/home/')
+      app.tab.show('#calendar')
+      navigate('/today/')
 		} 
 		catch(e){
       console.log(e)
@@ -266,7 +272,10 @@ function MailConnectionList(connector, tbody){
                               </td>
                         <td class="actions-cell">
                           <a class="link icon-only" href="/connector-logs/${value.pk}">
-                          <i class="icon material-icons">subject</i>
+                            <i class="icon material-icons">subject</i>
+                          </a>
+                          <a class="link icon-only integrations" href="#" connector="${value.pk}" connector_index="${index}">
+                            <i class="icon material-icons">workspaces</i>
                           </a>
                           <a class="link icon-only connector-popup ${(thread.is_active) ? 'simple': ''}" connector="${value.pk}" connector_index="${index}">
                           <i class="icon f7-icons if-not-md">square_pencil</i>

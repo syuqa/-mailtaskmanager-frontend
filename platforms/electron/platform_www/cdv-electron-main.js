@@ -24,36 +24,14 @@ const { cordova } = require('./package.json');
 const {
     app,
     BrowserWindow,
+    BrowserView,
     protocol,
     ipcMain,
     Tray,
     Menu,
     autoUpdater, 
-    dialog 
+    dialog
 } = require('electron');
-
-const server = 'https://mailtaskmanager-self.vercel.app'
-const url = `${server}/update/${process.platform}/${app.getVersion()}`
-
-autoUpdater.setFeedURL({ url })
-autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-    const dialogOpts = {
-      type: 'info',
-      buttons: ['Restart', 'Later'],
-      title: 'Application Update',
-      message: process.platform === 'win32' ? releaseNotes : releaseName,
-      detail: 'A new version has been downloaded. Restart the application to apply the updates.'
-    }
-  
-    dialog.showMessageBox(dialogOpts).then((returnValue) => {
-      if (returnValue.response === 0) autoUpdater.quitAndInstall()
-    })
-  })
-autoUpdater.on('error', message => {
-    console.error(`Repo: ${url}`)
-    console.error('There was a problem updating the application')
-    console.error(message)
-  })
 
 // Electron settings from .json file.
 const cdvElectronSettings = require('./cdv-electron-settings.json');
@@ -104,25 +82,87 @@ function createWindow () {
     //browserWindowOpts.webPreferences.contextIsolation = false;
 
     mainWindow = new BrowserWindow(browserWindowOpts);
-    mainWindow.setMenuBarVisibility(false)
+    const isMac = process.platform === 'darwin'
+    const template = [
+    // { role: 'appMenu' }
+    ...(isMac ? [{
+        label: app.name,
+        submenu: [
+        { role: 'about' },
+        { type: 'separator' },
+        { role: 'services' },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideOthers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit' }
+        ]
+    }] : []),
+    // { role: 'fileMenu' }
+    // { role: 'editMenu' }
+    // { role: 'viewMenu' }
+    {
+        label: 'Сервис',
+        submenu: [
+          { label: 'Обновить', role: 'reload' },
+          { type: 'separator' },
+          { label: 'Инструменты разработчика', role: 'toggleDevTools' },
+        ]
+      },
+    // { role: 'windowMenu' }
+    {
+        label: 'Информация',
+        submenu: [
+        {
+            label: 'О версии',
+            click: async () => {
+                const version = new BrowserWindow(
+                    { 
+                        width: 600, 
+                        height: 400, 
+                        title: 'О версии', 
+                        icon: appIcon, 
+                        minimizable: false, 
+                        maximizable: false, 
+                        resizable: false,
+                        alwaysOnTop: true,
+                        parent: mainWindow,
+                        webPreferences :{
+                            devTools: true,
+                            nodeIntegration: true,
+                            contextIsolation: false
+                        },
+                    }
+                )
+                version.setMenuBarVisibility(false)
+                version.loadFile('version.html')
+            }
+        }
+        ]
+    }
+    ]
+    const menu = Menu.buildFromTemplate(template)
+    Menu.setApplicationMenu(menu)
+    //mainWindow.setMenuBarVisibility(false)
     // Load a local HTML file or a remote URL.
     const cdvUrl = cdvElectronSettings.browserWindowInstance.loadURL.url;
     const loadUrl = cdvUrl.includes('://') ? cdvUrl : `${basePath}/${cdvUrl}`;
     const loadUrlOpts = Object.assign({}, cdvElectronSettings.browserWindowInstance.loadURL.options);
 
     mainWindow.loadURL(loadUrl, loadUrlOpts);
-    // Open the DevTools.
-    //if (cdvElectronSettings.browserWindow.webPreferences.devTools) {
-    //    mainWindow.webContents.openDevTools();
-    //}
+        // Open the DevTools.
+        //if (cdvElectronSettings.browserWindow.webPreferences.devTools) {
+        //    mainWindow.webContents.openDevTools();
+        //}
 
-    // Emitted when the window is closed.
-    /*mainWindow.on('closed', () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-        mainWindow = null;
-    });*/
+        // Emitted when the window is closed.
+        /*mainWindow.on('closed', () => {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+            mainWindow = null;
+        });*/
 
 
     mainWindow.on('close', (ev) => {
@@ -222,10 +262,6 @@ app.on('activate', () => {
 app.whenReady().then(() => {
     createWindow();
     createTray();
-    setInterval(() => {
-        autoUpdater.checkForUpdates()
-      }, 60000)
-
   });
   
   app.on('activate', () => {

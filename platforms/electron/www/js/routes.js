@@ -35,12 +35,25 @@ var routes = [
     }
   },
   {
-    path: '/about/',
-    url: './pages/about.html',
-  },
-  {
-    path: '/form/',
-    url: './pages/form.html',
+    path: '/bad-gateway/',
+    content: `<div class="page">
+              <div class="page-content parent">
+                  <center class="child">
+                    <img src="img/mm_.png" style="width: 120px;">
+                    <p style="opacity: 0.4;">Ошибка сервера</p>
+                    <p style="opacity: 0.8;"><a class="reload">Повторить</a></p>
+                  </center>
+                </div>
+          </div>`,
+    on: {
+          pageInit: function (event, page) {
+            let url = app.views.current.history[0]
+            page.$el.on('click', '.reload', function(){
+              console.log(url)
+              navigate(url)
+            })
+        }
+    }
   },
   {
     path: '/login/',
@@ -52,65 +65,30 @@ var routes = [
     url: './pages/logs.html',
     on: {
       pageInit: function (event, page) {
-        app.dialog.progress('Загрузка');
-        app.request.get(app_api(`connector/log/${page.route.params.pk}`), function(request){
-          page.$el.find('.page-content').html(request)
-          app.dialog.close();
-        },function(){app.dialog.close();})
+
+        page.$el.on('click','.right a', function(){
+          navigate(`/connector-logs/${page.route.params.pk}`)
+        })
+
+        const progress = app.dialog.progress('Загрузка', 0);
+        const url = app_api(`connector/log/${page.route.params.pk}`)
+        const xhr = new XMLHttpRequest();
+        xhr.onprogress = function(event){progress.setProgress(parseInt((event.loaded / event.total)* 100))}
+        xhr.open('GET', url, true);
+        xhr.send();
+        xhr.onload = xhr.onerror = function() {
+            if (this.status == 200) {
+                page.$el.find('.page-content').html(xhr.response)
+                setTimeout(
+                  progress.close(), 2000)
+            } 
+            else {
+              progress.close()
+            }
+        }
       }
     }
-  },
-  {
-    path: '/dynamic-route/blog/:blogId/post/:postId/',
-    componentUrl: './pages/dynamic-route.html',
-  },
-  {
-    path: '/request-and-load/user/:userId/',
-    async: function ({ router, to, resolve }) {
-      // App instance
-      var app = router.app;
-
-      // Show Preloader
-      app.preloader.show();
-
-      // User ID from request
-      var userId = to.params.userId;
-
-      // Simulate Ajax Request
-      setTimeout(function () {
-        // We got user data from request
-        var user = {
-          firstName: 'Vladimir',
-          lastName: 'Kharlampidi',
-          about: 'Hello, i am creator of Framework7! Hope you like it!',
-          links: [
-            {
-              title: 'Framework7 Website',
-              url: 'http://framework7.io',
-            },
-            {
-              title: 'Framework7 Forum',
-              url: 'http://forum.framework7.io',
-            },
-          ]
-        };
-        // Hide Preloader
-        app.preloader.hide();
-
-        // Resolve route to load page
-        resolve(
-          {
-            componentUrl: './pages/request-and-load.html',
-          },
-          {
-            props: {
-              user: user,
-            }
-          }
-        );
-      }, 1000);
-    },
-  },
+  }
 ];
 
 var calendar = [

@@ -190,35 +190,35 @@ function MailConnectionList(connector, tbody){
       }
     }
 
-    tbody.append($('\
-                    <tr>\
-                        <td class="checkbox-cell">\
-                          <label class="checkbox">\
-                          <input type="checkbox" />\
-                          <i class="icon-checkbox"></i>\
-                          </label>\
-                        </td>\
-                        <td class="label-cell connector-host">'+value.host+'</td>\
-                        <td class="label-cell connector-user">'+value.username+'</td>\
-                        <td class="label-cell connector-model" model="'+value.connection_model.pk+'">'+value.connection_model.name+'</td>\
-                        <td class="actions-cell">\
-                                '+error+'\
-                                <label class="toggle toggle-init color-green">\
-                                  <input type="checkbox" '+enable+'/>\
-                                  <span class="toggle-icon"></span>\
-                                  </label>\
-                              </td>\
-                        <td class="actions-cell">\
-                          <a class="link icon-only">\
-                          <i class="icon f7-icons if-not-md">square_pencil</i>\
-                          <i class="icon material-icons md-only">edit</i>\
-                          </a>\
-                          <!--a class="link icon-only">\
-                          <i class="icon f7-icons if-not-md">trash</i>\
-                          <i class="icon material-icons md-only">delete</i>\
-                          </a-->\
-                        </td>\
-                    </tr>'));
+    tbody.append($(`
+                    <tr>
+                        <td class="checkbox-cell">
+                          <label class="checkbox">
+                          <input type="checkbox" />
+                          <i class="icon-checkbox"></i>
+                          </label>
+                        </td>
+                        <td class="label-cell connector-host">${value.host}</td>
+                        <td class="label-cell connector-user">${value.username}</td>
+                        <td class="label-cell connector-model" model="${value.connection_model.pk}">${value.connection_model.name}</td>
+                        <td class="actions-cell">
+                                ${error}
+                                <label class="toggle toggle-init color-green">
+                                  <input type="checkbox" ${enable}/>
+                                  <span class="toggle-icon"></span>
+                                  </label>
+                              </td>
+                        <td class="actions-cell">
+                          <a class="link icon-only">
+                            <i class="icon f7-icons if-not-md">square_pencil</i>
+                            <i class="icon material-icons md-only">edit</i>
+                          </a>
+                          <!--a class="link icon-only">
+                          <i class="icon f7-icons if-not-md">trash</i>
+                          <i class="icon material-icons md-only">delete</i>
+                          </a-->
+                        </td>
+                    </tr>`));
     var options = {  year: 'numeric', month: 'long', day: 'numeric', weekday: 'long', hear: 'numeric', hour: '2-digit', minute:'2-digit', second: '2-digit'};
     var datetime = new Date(thread.created_at);
     const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);

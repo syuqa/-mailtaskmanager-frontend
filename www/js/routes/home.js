@@ -1,3 +1,5 @@
+const shell = require('electron').shell;
+
 function compare(a, b) {
     const aData = new Date($(a).data('event-date'));
     const bData = new Date($(b).data('event-date'));
@@ -201,6 +203,21 @@ calendar.push(
                                 <center class="child">
                                 <img src="img/mm_.png" style="width: 120px;">
                                 <p style="opacity: 0.4;">Ошибка подключения к серверу</p>
+                                </center>
+                            </div>
+                        </div>`,
+                    on: {
+                              pageInit: function (event, page) {
+                            }
+                        }
+            },
+            {
+                path: '/bad-gateway/',
+                content: `<div class="page">
+                            <div class="page-content parent">
+                                <center class="child">
+                                <img src="img/mm_.png" style="width: 120px;">
+                                <p style="opacity: 0.4;">Неизвестная ошибка сервера</p>
                                 </center>
                             </div>
                         </div>`,

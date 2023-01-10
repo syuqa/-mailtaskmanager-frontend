@@ -1,3 +1,86 @@
+function integrations(connectors, current_connector){
+  var content = $(`
+      <div>
+      <div class="popup">
+        <div class="view view-popup">
+
+          <!-- titlebar -->
+          <div class="navbar queue-popup">
+              <div class="navbar-bg"></div>
+              <div class="navbar-inner navbar-inner-centered-title">
+                  <div class="left">
+                      <a href="#" class="link popup-close">Закрыть</a>
+                  </div>
+                  <div class="title">Интеграции</label>
+                  </div>
+                  <div class="right">
+                      <a href="#" class="link popup-clos save required-validate" validate="false">Сохранить</a>
+                  </div>
+              </div>
+          </div>
+
+          <div class="page-content">
+              <div class="list accordion-list">
+                <ul></ul>
+              </div>
+            </div>
+        </div>
+      </div>
+      </div>`)
+for (const [index, element] of connectors.entries()){
+  let integration_param = undefined
+  if (current_connector.itegration_paramets[element.name]){
+    integration_param = current_connector.itegration_paramets[element.name].account
+  }
+  
+  const integers = $(`
+        <li class="accordion-item">
+          <label class="toggle toggle-init color-green toggle-1" style="float: left;padding-top: 14px;margin-right: 5px;margin-left: 10px;">
+              <input type="checkbox" name="integration" integration="${element.name}" ${ (integration_param) ? (integration_param.enable) ? 'checked="true"':'':''}>
+              <span class="toggle-icon"></span>
+            </label>
+          <a class="item-content item-link" href="#">
+            <div class="item-inner">
+              <div class="item-title">${element.name}</div>
+            </div>
+          </a>
+          <div class="accordion-item-content ${ (integration_param) ? (integration_param.enable) ? '':'simple':'simple'}" integration="${element.name}">
+          <!--div class="block-header" style="padding-top: 10px;text-align: center;border-width: 0.5px 0px 0px 0px;border-style: inset;border-color: #0000001c;">Аккаунт</div-->
+            <div class="list inline-labels no-hairlines-md integration-list" integration="${element.name}" style="border-width: 0.5px 0px 1px 0px;border-style: inset;border-color: #0000001c;">
+              <ul></ul>
+            </div>
+            <div class="block-header" style="padding-top: 10px;">
+              Дополнителные Параметры
+              <a href="#" class="load-siple" integration="${element.name}" style="float: right;">загрузить шаблон</a>
+            </div>
+            <div id="jsoneditor_${element.name}"></div>
+          </div>
+        </li>`)
+
+    for (const [index, param] of element.parametrs.entries()){
+      let valid = (integration_param) ? (integration_param.enable) ? (param.validate) ? 'validate': '': (param.validate) ? 'validates': '' : ''
+      let li = $(`<li class="item-content item-input">
+                      <div class="item-media">
+                        <i class="icon material-icons demo-list-icon">notes</i>
+                      </div>
+                      <div class="item-inner">
+                        <div class="item-title item-label">${param.description}</div>
+                        <div class="item-input-wrap">
+                          <input type="${param.type}" name="${param.name}" class="${valid}" placeholder="${(param.name == 'username') ? current_connector.username:param.placeholder}" value="${(integration_param) ? integration_param[param.name] :''}"/>
+                          <span class="input-clear-button"></span>
+                        </div>
+                      </div>
+                    </li>`)
+      integers.find('ul').append(li)
+    }
+
+    content.find('.accordion-list ul').append(integers)
+}
+
+return content.html()
+  
+}
+
 routes.push({
     path: '/profile/',
     url: './pages/profile.html',
@@ -149,6 +232,142 @@ routes.push({
                 })
               })
             })
+
+            page.$el.on('click', '.integrations', function(){
+              var connector_index = $(this).attr('connector_index')
+              var connector = reqdata.connector.mail[connector_index]
+              let integration_list = reqdata.connector.integrations
+              var integrationsPopup = app.popup.create(
+                {
+                  content: integrations(integration_list, connector),
+                  on: {
+                    open: function (popup) {
+                      // Проверка заполнености обязателных полей
+                      popup.$el.on('input', 'input.validate', function(){
+                        validate(popup.$el)
+                      })
+                      // Вкл./Выкл. Интеграции
+                      popup.$el.on('click', 'input[type="checkbox"][name="integration"]', function(){
+                       let name = $(this).attr('integration')
+                       let ul = popup.$el.find(`.accordion-item-content[integration=${name}]`)
+                        if (ul.hasClass('simple')){
+                            ul.removeClass('simple')
+                            let validate = ul.find('.validates')
+                            if (validate){
+                              validate.removeClass('validates')
+                              validate.addClass('validate')
+                            }
+                        }else{
+                          ul.addClass('simple')
+                          let validate = ul.find('.validates')
+                          if (validate){
+                            validate.removeClass('validate')
+                            validate.addClass('validates')
+                          }
+                        }
+                        validate(popup.$el)
+                      })
+
+                      // Редактор js кода
+                      integration_list.forEach(element => {
+                          const container = document.getElementById(`jsoneditor_${element.name}`)
+                          const options = {
+                            mode: 'tree',
+                            modes: ['code', 'tree'], // allowed modes
+                            onModeChange: function (newMode, oldMode) {
+                              console.log('Mode switched from', oldMode, 'to', newMode)
+                            }
+                          }
+                          const editor = new JSONEditor(container, options)
+                          app.editors = {}
+                          app.editors[element.name] = editor
+                          // get json
+                          var initialJson = {}
+                          if (connector.itegration_paramets[element.name]){
+                             initialJson = connector.itegration_paramets[element.name].parameters
+                          }
+                          // set list
+                          editor.set(initialJson)
+
+                          // get json
+                          const updatedJson = editor.get()
+
+                      });
+
+                      // Сохранение настроек интеграции
+                      popup.$el.on('click', '.save', function(){
+                        const integration_param = {}
+                        $('.accordion-item').forEach(el => {
+
+                          const account = {}
+                           
+                          // собираем параметры аккаунта
+                          $(el).find('.accordion-item-content .list li input').forEach(el => {
+                            account[el.name] = el.value
+                          })
+
+                          // собираем дополнительные параметры
+                          let name = $(el).find('.accordion-item-content').attr('integration')
+
+                          // вкл./выкл.
+                          let enable = $(el).find(`input[name="integration"][integration="${name}"]`).is(':checked')
+
+                            if (!integration_param[name]){
+                              integration_param[name] = {}
+                            }
+                          
+                          integration_param[name]['account'] = account
+                          integration_param[name]['account']['enable'] = enable
+                          integration_param[name]['parameters'] = app.editors[name].get()
+                        })
+
+                        // Сохранение
+                        app.request(
+                          {
+                            url: app_api(`api/data/connection/mail/connector/${connector.pk}`),
+                            method: "PATCH",
+                            dataType: 'json',
+                            contentType: "application/json",
+                            data: {itegration_paramets: integration_param},
+                            statusCode: {
+                              200: function (xhr) {
+                                var response = JSON.parse(xhr.response)
+                                app.app_profile_data.connector.mail[connector_index] = response
+                                integrationsPopup.close()
+                              },
+                              401: function (xhr) {
+                                console.log(xhr)
+                                ErrorProcessorRequest({status: '401'})
+                              } 
+                          }
+                        })
+            
+                        console.log(integration_param)
+                      })
+
+                      // Загрузка маппинга
+                      popup.$el.on('click', '.load-siple', function(){
+                        let integration = $(this).attr('integration')
+                        const account = {connector: connector.pk}
+                        app.preloader.show()
+                        popup.$el.find('.accordion-item-content[integration="Timetta"] ul input').forEach(el => account[el.name] = el.value)
+                        const container = document.getElementById(`jsoneditor_${integration}`)
+                        app.request.postJSON(app_api(`api/integration/simple/${integration}`), account,
+                          function(request){
+                            app.editors[integration].set(request)
+                            app.preloader.hide()
+                          }, 
+                          function(request){
+                            app.preloader.hide()
+                            console.log(request)
+                          })
+                      })
+                    }
+                  }
+                }
+              )
+              integrationsPopup.open()
+          })
 
             // Open dynamic popup
             $('.connector-popup').on('click', function () {
