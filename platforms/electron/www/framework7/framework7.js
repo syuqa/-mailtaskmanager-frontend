@@ -3106,7 +3106,7 @@
         Framework7.instance = app; // Default
 
         const defaults = {
-          version: '1.0.0',
+          version: '1.1.0',
           id: 'io.framework7.myapp',
           el: 'body',
           theme: 'auto',

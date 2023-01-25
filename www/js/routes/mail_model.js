@@ -85,8 +85,14 @@ function create_actions_param(action, current_rule, simple){
   const values = current_rule.action_parameters 
   const content = $('<div></div>')
   for (const [index, value] of action.entries()){
+    const plugins = value.plugins.map(plugin => { return `<div class="chip plugin link" name="${plugin.name}">
+    <div class="chip-media bg-color-blue">
+      <i class="icon material-icons">${plugin.icon}</i>
+    </div>
+    <div class="chip-label">${plugin.description}</div>
+  </div>`})
     const list = $(`<div class="list no-hairlines-md event-list ${enable_action.includes(value.id) ? '':'disable'}" action="${value.id}">
-                    <div class="block-header" style="margin-left: 0;margin-right: -2px;">${value.parameters_title}</div>
+                    <div class="block-header" style="margin-left: 0;margin-right: -2px;"><font style="margin-right: 10px;">${value.parameters_title}</font>${plugins.join('')}</div>
                     <ul class="action_params" action="${value.id}" index="${index}"></ul>`)
     const action_name = value.name
     const parameters = value.parameters
@@ -97,12 +103,12 @@ function create_actions_param(action, current_rule, simple){
             list.find('ul').append(`
                 <li class="item-content item-input">
                 <div class="item-media">
-                  <i class="icon material-icons demo-list-icon">text_format</i>
+                  <i class="icon material-icons demo-list-icon">data_object</i>
                 </div>
                 <div class="item-inner">
                   <div class="item-title item-label">${value.description}</div>
                   <div class="item-input-wrap ${simple}">
-                    <input class="${valid}" type="text" name="${value.name}" placeholder="${value.placeholder}" value="${(values[action_name] && values[action_name][value.name]) ? values[action_name][value.name]: ''}" />
+                    <input class="${valid}" type="text" name="${value.name}" placeholder="${value.placeholder}" value="${(values[action_name] && values[action_name][value.name]) ? values[action_name][value.name]: ''}" ${(valid) ? 'required validate':''} />
                     <span class="input-clear-button"></span>
                   </div>
                 </div>
@@ -112,13 +118,28 @@ function create_actions_param(action, current_rule, simple){
         list.find('ul').append(`
                 <li class="item-content item-input">
                 <div class="item-media">
-                  <i class="icon demo-list-icon material-icons" id="${value.name}-color-picker-palette-value-${current_rule.pk}">text_format</i>
+                  <i class="icon demo-list-icon material-icons" id="${value.name}-color-picker-palette-value-${current_rule.pk}">invert_colors</i>
                 </div>
                 <div class="item-inner">
                   <div class="item-title item-label">${value.description}</div>
                   <div class="item-input-wrap item-color ${simple}">
-                    <input class="${valid}" type="text" placeholder="${value.placeholder}" name="${value.name}" value="${(values[action_name] && values[action_name][value.name]) ? values[action_name][value.name]: ''}" readonly="readonly" id="${value.name}-color-picker-palette-${current_rule.pk}" />
+                    <input class="${valid}" type="text" placeholder="${value.placeholder}" name="${value.name}" value="${(values[action_name] && values[action_name][value.name]) ? values[action_name][value.name]: ''}" readonly="readonly" id="${value.name}-color-picker-palette-${current_rule.pk}"  ${(valid) ? 'required validate':''}/>
                   </div>
+                </div>
+              </li>
+          `)
+      }else if (value.type == 'htmltext'){
+        list.find('ul').append(`
+                <li class="item-content item-input">
+                <div class="item-media">
+                  <i class="icon material-icons demo-list-icon">data_object</i>
+                </div>
+                <div class="item-inner">
+                  <div class="item-title item-label">${value.description}</div>
+                  <div class="item-input-wrap ${simple}">
+                    <input class="count-data codemirror" type="text" style="color: #00000080;" value="${(values[action_name] && values[action_name][value.name]) ? 'Символов: '+ values[action_name][value.name].length: 'Cимволов: 0'}" readonly ${(valid) ? 'required validate':''} />
+                    <textarea class="xml ${valid}" type="text" style="display:none" name="${value.name}" placeholder="${value.placeholder}">${(values[action_name] && values[action_name][value.name]) ? values[action_name][value.name]: ''}</textarea>
+                    </div>
                 </div>
               </li>
           `)
@@ -126,7 +147,7 @@ function create_actions_param(action, current_rule, simple){
         list.find('ul').append(`
                 <li class="item-content item-input">
                 <div class="item-media">
-                  <i class="icon material-icons demo-list-icon">text_format</i>
+                  <i class="icon material-icons demo-list-icon">data_object</i>
                 </div>
                 <div class="item-inner">
                   <div class="item-title item-label">${value.description}</div>
@@ -993,6 +1014,103 @@ routes.push(
                                 }
                               }
                           });
+                        // Редактор кода
+                        popup.$el.on('click', '.codemirror', function(){
+                          let text = $(this.offsetParent).find('textarea')
+                          let cont = this
+                          var dynamicSheet = app.sheet.create({
+                            content: `
+                              <div class="sheet-modal" style="height: 100%">
+                                <div class="toolbar">
+                                  <div class="toolbar-inner">
+                                    <div class="left">
+                                      <p class="segmented segmented-raised">
+                                        <button class="button button-active autoformat"><span class="material-icons">sort</span></button>
+                                        <button class="button search"><span class="material-icons">manage_search</span></button>
+                                        <button class="button replace-all" ><span class="material-icons">find_replace</span></button>
+                                      </p>
+                                    </div>
+                                    <div class="right">
+                                      <button class="button button-active sheet-close" onclick="autoFormatSelection()"><span class="material-icons">save</span></button>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="sheet-modal-inner">
+                                  <div class="block" style="height: 100%">
+                                    <textarea class="xml" type="text" style="100%">${text.value()}</textarea>
+                                  </div>
+                                </div>
+                              </div>
+                            `,
+                            // Events
+                            on: {
+                              open: function (sheet) {
+                                console.log('Sheet open');
+                                var code = CodeMirror.fromTextArea(sheet.$el.find('textarea')[0], 
+                                { 
+                                  mode: 'xml', 
+                                  lineNumbers: true, 
+                                  fullScreen: true,
+                                  extraKeys: {"Alt-F": "findPersistent"}
+                                })
+                                
+                                sheet.$el.on('click', '.autoformat', function(){
+                                  var range = getSelectedRange();
+                                  code.autoFormatRange(range.from, range.to);
+                                })
+
+                                sheet.$el.on('click', '.search', function(){
+                                  CodeMirror.commands.findPrev(code)
+                                })
+
+                                sheet.$el.on('click', '.replace-all', function(){
+                                  CodeMirror.commands.replaceAll(code)
+                                })
+
+                                // Выделить все
+                                //CodeMirror.commands["selectAll"](code);
+                                
+                                function getSelectedRange() {
+                                  return { from: code.getCursor(true), to: code.getCursor(false) };
+                                }
+                                
+                                sheet.code = code
+
+                              },
+                              opened: function (sheet) {
+                                console.log(sheet.code);
+                              },
+                              closed: function(sheet){
+                                text.value(sheet.code.getValue())
+                                cont.value = 'Символов: ' + sheet.code.getValue().length
+                              }
+                            }
+                          });
+                          dynamicSheet.open()
+                        })
+                        
+
+                        //popup.$el.find('textarea.xml').forEach(el => {
+                        //  CodeMirror.fromTextArea(el, { mode: 'xml', lineNumbers: true, viewportMargin: Infinity })
+                        //})
+                        // Плагины 
+                        popup.$el.on('click', '.plugin', function(){
+                          let ul = this.parentElement.nextElementSibling
+                          let name = $(this).attr('name')
+                          //
+                          const params = {}
+
+                          $(ul).find('input').forEach(function(el){
+                            params[el.name] = el.value
+                          })
+
+                          $(ul).find('textarea').forEach(function(el){
+                            params[el.name] = el.value
+                          })
+                          // Новое окно с плагином
+                          newWin = window.open(app_api(`plugin/${name}/${rule}`), `Плагин ${name}`, "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=600,top="+(screen.height-400)+",left="+(screen.width-840));
+                          
+                        })
                         // Новый фильтр
                         popup.$el.on('click', '.mail-model-fiter', function(){
                           popup.$el.find('.fiter-list ul').append(filters([{condition: '', attribute: '0', method: ''}], attr_list, method_list, true))
@@ -1023,6 +1141,10 @@ routes.push(
                               params[_action] = {}
                             }
                               $(el).find('input').forEach(function(el){
+                                params[_action][el.name] = el.value
+                              })
+
+                              $(el).find('textarea').forEach(function(el){
                                 params[_action][el.name] = el.value
                               })
                           })

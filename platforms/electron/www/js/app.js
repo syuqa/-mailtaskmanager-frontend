@@ -8,6 +8,10 @@ function app_ws(path){
   return new URL(path, 'ws://syu-developer-02.ru/').href 
 }
 
+function utf8_to_b64(str) {
+  return window.btoa(unescape(encodeURIComponent(str)));
+}
+
   // проверка заполнености обязательных полей
 function validate(el){
     var count_validate = 0
@@ -34,7 +38,8 @@ var app = new Framework7({
   theme: 'auto', // Automatic theme detection
   el: '#app', // App root element
 
-  id: 'io.framework7.myapp', // App bundle ID
+  id: 'io.cordova.taskmanager', // App bundle ID
+  version: '1.1.0',
   // App routes
   routes: routes,
   dialog: {
@@ -171,6 +176,24 @@ function get_tasks(){
   })
 }
 
+window.addEventListener("message", (event) => {
+  console.log(event)
+  if (app_api().includes(event.origin)){
+      let data = JSON.parse(event.data)
+      if (data.action && data.element){
+       $el = $(document).find(`${data.action} ${data.element}`)
+       console.log($el)
+       $el.forEach(el => {
+        console.log(el)
+        if (['textarea', 'input'].includes(el.localName)){
+          el.value = data.value
+        }
+       })
+      }
+  }
+  
+}, false);
+
 /* Вход в приложение */
 $(document).on("click", ".login-button", function() {
 
@@ -271,7 +294,7 @@ function MailConnectionList(connector, tbody){
                                   </label>
                               </td>
                         <td class="actions-cell">
-                          <a class="link icon-only" href="/connector-logs/${value.pk}">
+                          <a class="link icon-only" href="/history/${value.pk}">
                             <i class="icon material-icons">subject</i>
                           </a>
                           <a class="link icon-only integrations" href="#" connector="${value.pk}" connector_index="${index}">

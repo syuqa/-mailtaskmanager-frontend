@@ -158,7 +158,8 @@ var app = new Framework7({
         }
     }
   },
-  id: 'io.framework7.myapp', // App bundle ID
+  id: 'io.cordova.taskmanager', // App bundle ID
+  version: '1.1.0',
   // App routes
   dialog: {
     // set default title for all dialog shortcuts

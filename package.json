@@ -1,7 +1,7 @@
 {
   "name": "mail-task-manager",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Mail-TaskManager",
   "repository": "",
   "license": "UNLICENSED",
@@ -21,6 +21,8 @@
     "Samsung >= 12"
   ],
   "dependencies": {
+    "codemirror": "^6.0.1",
+    "cordova": "^11.1.0",
     "cordova-plugin-vpn": "^1.0.0",
     "dom7": "^4.0.4",
     "file-saver": "^2.0.5",

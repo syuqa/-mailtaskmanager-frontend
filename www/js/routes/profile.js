@@ -81,13 +81,24 @@ return content.html()
   
 }
 
+function check_smtp(el){
+  if (el.find('input[name=smtp]').is(':checked')){
+    el.find('.smtp').css('display', '')
+    el.find('.smtp input').addClass('validate')
+    el.find('.imap').css('background', 'beige')
+  }else{
+    el.find('.smtp').css('display', 'none')
+    el.find('.smtp .validate').removeClass('validate')
+    el.find('.imap').css('background', '')
+  }
+}
+
 routes.push({
     path: '/profile/',
     url: './pages/profile.html',
     on: {
       pageInit: function (event, page) {
         app.request.get(app_api('api/data/profile'), function(request){
-          console.log(request)
           var reqdata = JSON.parse(request)
           app['app_profile_data'] = reqdata
           // Connector list
@@ -370,7 +381,7 @@ routes.push({
           })
 
             // Open dynamic popup
-            $('.connector-popup').on('click', function () {
+            page.$el.on('click', '.connector-popup', function () {
               var connector = $(this).attr('connector')
               var connector_index = $(this).attr('connector_index')
               console.log(this, connector_index, connector)
@@ -378,7 +389,7 @@ routes.push({
                 var email = reqdata.connector.mail[connector_index]
                 console.log('try:', email)  
               }else{
-                var email = {host: '', port: '', username: '', password: '', tls: false, connection_model: '', load_interval: '', debug: false, path: 'INBOX'}
+                var email = {host: '', port: '', username: '', password: '', tls: false, smtp: false, smtphost: '', smtport: 0, smtpssl: true, connection_model: '', load_interval: '', debug: false, path: 'INBOX'}
               }  
               // Popup create and edit connector
               // Create dynamic Popup connector
@@ -409,7 +420,7 @@ routes.push({
                         <!-- content -->
                         <div class="page-content">
                           <div class="list inline-labels no-hairlines-md" style=" margin-top: 20px;margin-bottom: 20px;">
-                          <div class="block-header">Параметры подключения</div>
+                          <div class="block-header">Параметры подключения<label class="toggle toggle-init color-blue " style="float: right;"><input name="smtp"  type="checkbox" ${(email.smtp) ? 'checked': ''}><span class="toggle-icon"></span></label><label style="float:right;padding-right: 10px;padding-top: 0px;">Отправка писем</label></div>
                           <ul>
     
                             <li class="item-content item-input">
@@ -418,9 +429,16 @@ routes.push({
                               </div>
                               <div class="item-inner">
                                 <div class="item-title item-label">Адрес сервера</div>
-                                <div class="item-input-wrap">
-                                  <input type="url" name="host" class="validate" placeholder="SMTP хост" value="${email.host}"/>
-                                  <span class="input-clear-button"></span>
+                                <div class="item-input-wrap imap" style="
+                                    padding-left: 5px;
+                                    margin-right: 5px;
+                                ">
+                                  <input type="url" name="host" class="validate " placeholder="IMAP хост" value="${email.host}"/>
+                                  <span class="input-clear-button" style="padding-right: 10px;"></span>
+                                </div>
+                                <div class="item-input-wrap smtp" style="background: #5ac8fa54;dispaly:none;">
+                                  <input type="url" name="smtphost" class="input-with-value" placeholder="SMTP хост" value="${(email.smtphost) ? email.smtphost: ''}"  style="padding-left: 5px;padding-right: 0px;">
+                                  <span class="input-clear-button" style="padding-right: 5px;"></span>
                                 </div>
                               </div>
                             </li>
@@ -431,8 +449,14 @@ routes.push({
                               </div>
                               <div class="item-inner">
                                 <div class="item-title item-label">Порт</div>
-                                <div class="item-input-wrap">
-                                  <input type="number" class="validate" name="port" placeholder="порт почтового сервера" value="${email.port}"/>
+                                <div class="item-input-wrap imap" style="
+                                    padding-left: 5px;
+                                    margin-right: 5px;
+                                ">
+                                  <input type="number" style="padding-right: 5px;" class="validate" name="port" placeholder="IMAP порт" value="${email.port}"/>
+                                </div>
+                                <div class="item-input-wrap smtp" style="background: #c9edfd;dispaly:none;">
+                                  <input type="number" class="" name="smtport" placeholder="SMTP порт" value="${email.smtport}" style="padding-left: 5px;margin-right: 0px;padding-right: 5px;">
                                 </div>
                               </div>
                             </li>
@@ -469,10 +493,19 @@ routes.push({
                               </div>
                               <div class="item-inner">
                                 <div class="item-title item-label">Протокол защиты</div>
-                                <div class="item-input-wrap input-dropdown-wrap">
-                                  <select placeholder="Please choose..." name="protocol">
+                                <div class="item-input-wrap input-dropdown-wrap imap" style="margin-right: 5px;">
+                                  <select placeholder="Please choose..." name="protocol" style="
+                                        padding-left: 5px;
+                                        margin-right: 5px;
+                                   ">
                                     <option value="tls" ${(email.tls) ? 'selected': ''}>TLS</option>
                                     <option value="ssl" ${(email.tls) ? '': 'selected' }>SSL</option>
+                                  </select>
+                                </div>
+                                <div class="item-input-wrap input-dropdown-wrap smtp" style="dispaly:none;">
+                                  <select placeholder="Please choose..." name="smtpssl" style="padding-left: 5px;background: #c9edfd;">
+                                    <option value="tls" ${(email.smtpssl) ? '': 'selected' }>TLS</option>
+                                    <option value="ssl" ${(email.smtpssl) ? 'selected': '' }>SSL</option>
                                   </select>
                                 </div>
                               </div>
@@ -550,6 +583,17 @@ routes.push({
                   // Events
                   on: {
                     open: function (popup) {
+                      // SMTP 
+                      check_smtp(popup.$el)
+                      // Вкл.\выкл. дебаг 
+                      popup.$el.on('click', 'input[type=debug]', function(){
+                        validate(popup.$el)
+                      })
+                      // Вкл.\выкл SMTP
+                      popup.$el.on('click', 'input[name=smtp]', function(){
+                        check_smtp(popup.$el)
+                        validate(popup.$el)
+                      })
                       // Проверка заполнености обязателных полей
                       popup.$el.on('input', 'ul input.validate', function(){
                         validate(popup.$el)
@@ -565,7 +609,11 @@ routes.push({
                           connection_model: popup.$el.find('select[name=model]').val(),
                           load_interval: popup.$el.find('input[name=load_interval]').val(),
                           debug: popup.$el.find('input[name=debug]').is(':checked'),
-                          path: popup.$el.find('input[name=path]').val()
+                          path: popup.$el.find('input[name=path]').val(),
+                          smtp: popup.$el.find('input[name=smtp]').is(':checked'),
+                          smtphost: popup.$el.find('input[name=smtphost]').val(),
+                          smtport: popup.$el.find('input[name=smtport]').val(),
+                          smtpssl: (popup.$el.find('select[name=smtpssl]').val() == 'ssl') ? true: false,
                         }
                         if (connector == null){
                           app.request.postJSON(app_api('api/data/connection/mail/connector'), data,

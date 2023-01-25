@@ -2,7 +2,7 @@
   "main": "cdv-electron-main.js",
   "name": "io.cordova.taskmanager",
   "displayName": "MailTaskManager",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Sample Apache Cordova App",
   "homepage": "https://cordova.apache.org",
   "license": "Apache-2.0",
