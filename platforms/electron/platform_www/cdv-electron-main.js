@@ -140,33 +140,6 @@ function createWindow () {
             }
         }
         ]
-    },
-    {
-        label: 'Плагины',
-        submenu: [
-            {
-                label: 'Конструктор почтовых сообщений',
-                click: async () => {
-                    const version = new BrowserWindow(
-                        { 
-                            width: 800, 
-                            height: 600, 
-                            title: 'Конструктор почтовых сообщений', 
-                            icon: appIcon, 
-                            alwaysOnTop: true,
-                            parent: mainWindow,
-                            webPreferences :{
-                                devTools: true,
-                                nodeIntegration: true,
-                                contextIsolation: false
-                            },
-                        }
-                    )
-                    version.setMenuBarVisibility(false)
-                    version.loadFile('mailconstructor.html')
-                }
-            }
-            ]
     }
     ]
     const menu = Menu.buildFromTemplate(template)
