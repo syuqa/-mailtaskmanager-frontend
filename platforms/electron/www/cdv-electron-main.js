@@ -28,9 +28,7 @@ const {
     protocol,
     ipcMain,
     Tray,
-    Menu,
-    autoUpdater, 
-    dialog
+    Menu
 } = require('electron');
 
 // Electron settings from .json file.
@@ -142,31 +140,34 @@ function createWindow () {
         ]
     },
     {
-        label: 'Плагины',
+        label: 'Конфигурации',
         submenu: [
-            {
-                label: 'Конструктор почтовых сообщений',
-                click: async () => {
-                    const version = new BrowserWindow(
-                        { 
-                            width: 800, 
-                            height: 600, 
-                            title: 'Конструктор почтовых сообщений', 
-                            icon: appIcon, 
-                            alwaysOnTop: true,
-                            parent: mainWindow,
-                            webPreferences :{
-                                devTools: true,
-                                nodeIntegration: true,
-                                contextIsolation: false
-                            },
-                        }
-                    )
-                    version.setMenuBarVisibility(false)
-                    version.loadFile('mailconstructor.html')
-                }
+        {
+            label: 'Модели',
+            click: async () => {
+                const version = new BrowserWindow(
+                    { 
+                        width: 800, 
+                        height: 600, 
+                        title: 'Модели', 
+                        icon: appIcon, 
+                        minimizable: true, 
+                        maximizable: true, 
+                        resizable: true,
+                        alwaysOnTop: false,
+                        parent: mainWindow,
+                        webPreferences :{
+                            devTools: true,
+                            nodeIntegration: true,
+                            contextIsolation: false
+                        },
+                    }
+                )
+                version.setMenuBarVisibility(false)
+                version.loadFile('drawflow.html')
             }
-            ]
+        }
+        ]
     }
     ]
     const menu = Menu.buildFromTemplate(template)

@@ -90,7 +90,7 @@
 }
 
 .links-list a:after, .list .item-inner:after, .simple-list li:after {
-  height: 0.5px !important;
+  height: 1px !important;
 }
 
 .disable {
@@ -111,3 +111,65 @@
 .jsoneditor-poweredBy {
   display: none;
 }
+
+.title-icon {
+  font-size: 18px !important;
+  padding-top: 15px;
+  padding-right: 12px;
+}
+
+.drawflow_content_node {
+  width: 100%;
+}
+
+.shroud {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #ffffff8c;
+  z-index: 10;
+}
+
+.drawflow .input:after{
+  display: none !important;
+}
+
+.drawflow a.rollback {
+
+   float: right;
+    padding-top: 12px;
+    margin-right: 10px;
+    color: red;
+    padding-left: 0px;
+    margin-left: 20px;
+
+  }
+
+.drawflow a.done {
+    float: right;
+    padding-top: 12px;
+    margin-right: 10px;
+    color: green;
+}
+
+.drawflow a.block-type {
+  float: right;
+  padding-top: 12px;
+  margin-right: 10px;
+  color: rgba(128, 128, 128, 0.4);
+  display: none;
+}
+
+.popup {
+  z-index: 99999;
+}
+
+.smart-select-value {
+  display: none !important;
+}
+
+/*
+.drawflow input{
+  border: none ;
+}
+*/

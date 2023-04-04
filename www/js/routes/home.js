@@ -3,6 +3,7 @@ const shell = require('electron').shell;
 function compare(a, b) {
     const aData = new Date($(a).data('event-date'));
     const bData = new Date($(b).data('event-date'));
+    console.log('compare', aData, bData)
     if (aData < bData) {
       return -1;
     }
@@ -12,57 +13,134 @@ function compare(a, b) {
     return 0;
   }
 
-function task_list(page, date){
-    const tdate = parseInt(Date.parse(date).toString().substr(0, 10))
-    console.log(date, tdate)
+
+
+function task_list(page, dates, rangePicker=false){
+    
+
+    function days(_page, index, element, event_datetime, request){
+
+            var options = { hour: 'numeric', minute: 'numeric'};
+            
+            const event = function event () { 
+                let events = new String()
+                var event_dt = event_datetime
+                for (const [index, el] of element.day_actions.entries()){
+                    if ( new Date(event_datetime).setHours(0, 0, 0, 0) == new Date(el.event_datetime).setHours(0, 0, 0, 0)){
+                        events += `<div class="chip chip-outline" style="background: ${el.events.create_event.background};margin-right: 5px;">
+                                        <div class="chip-label">${el.events.create_event.event}</div>
+                                    </div>`
+                        event_dt = el.event_datetime
+                    }
+                };
+             return { event: events, datetime: event_dt}
+            }
+            
+            const events = event()
+             _page.find('.list ul').append(
+                 $(`<li class="listing-item" data-event-date="${event_datetime}" style="display: flex">
+                             <a class="item-link item-content task-event" index="${index}" event="${element.pk}" 
+                         style=" padding-right: 16px;
+                                 padding-right: 16px;
+                                 border-width: 0px 5px 0px 0px;
+                                 border-style: double;
+                                 border-color: #f3f4f6;">
+                         <span class="material-icons">timeline</span>
+                     </a>
+                     <a href="${element.history[0].events.create_event.event_link}" class="item-link item-content" style="width: 100%;">
+                         <div class="item-inner">
+                             <div class="item-title-row">
+                             <div class="item-title">${element.title}</div>
+                             <div class="item-after">${new Date(events.datetime).toLocaleTimeString("ru-RU", options)}</div>
+                             </div>
+                             <div class="item-subtitle" style="margin-top: 7px;">${events.event}</div>
+                             <!--div class="item-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis
+                             tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum
+                             sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec
+                             dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus.</div-->
+                         </div>
+                     </a>
+                 </li>`))
+                /*
+                 const items = [..._page.find('.listing-item')];
+                 if (items.length > 1){
+                    items.sort(compare);
+                    _page.find('#tasks').empty();
+                    items.forEach(item => {
+                        _page.find('#tasks').prepend(item);
+                    });
+                 }
+                 */
+    }
+
+
+    const range = (request) => { 
+        var sdate = new Date(dates[0]); 
+        const edate = new Date(dates[1]);
+        while(sdate <= edate){
+            var options = {month: 'long', day: 'numeric', year: 'numeric'};
+            const _page = $(`<div>
+                    <div class="block-title">${sdate.toLocaleDateString("ru-RU", options)}</div>
+                    <div class="list media-list" style="margin-top: 0px;">
+                        <ul class="tasks"></ul>
+                    </div>
+                </div>
+            `)
+
+
+            for (const [index, element] of request.entries()){
+                if (element.day_actions.map(el => {return new Date(el.event_datetime).setHours(0, 0, 0, 0) }).includes(sdate.setHours(0, 0, 0, 0))) {
+                    days(_page, index, element, sdate, request)
+                }
+            }
+
+            /*
+            if (_page.find('.listing-item').length > 0){
+                console.log()
+                const items = [..._page.find('.listing-item')];
+                console.log('tasks', items)
+                items.sort(compare);
+                $('.tasks').empty();
+                    items.forEach(item => {
+                                $('.tasks').prepend(item);
+                            });
+            }
+            */
+
+            if (_page.find('li').length > 0){
+                page.find('.page-content').append(_page)
+            }
+            sdate.setDate(sdate.getDate() + 1);
+        }   
+    }
+
+    const onlyday = (request) => {
+         for (const [index, element] of request.entries())
+         {  
+            var event_datetime  = new Date(element.day_actions[element.day_actions.length - 1].event_datetime);
+                days(page, index, element, event_datetime, request)
+         }
+     }
+
+    if (dates.length > 1){
+        var sdate = dates[0]
+        var tdate = dates[1]
+    }else{
+        var sdate = dates[0]
+        var tdate = dates[0]
+    }
+
+    const parsedate = (date) => {return parseInt(Date.parse(date).toString().substr(0, 10))}
     var options = { hour: 'numeric', minute: 'numeric'};
-                            app.request.get(app_api(`api/tasks/day/${tdate}`), 
+                            app.request.get(app_api(`api/tasks/day/${parsedate(sdate)}/${parsedate(tdate)}`), 
                                 function(request){
                                     page.find('.page-content').html('<div class="list media-list" style="margin-top: 0px;"><ul id="tasks"></ul></div>')
-                                    if (JSON.parse(request).length > 0){
-                                        app.tasks = JSON.parse(request)
-                                        for (const [index, element] of JSON.parse(request).entries())
-                                        {   
-                                            var today  = new Date(element.day_actions[element.day_actions.length - 1].event_datetime);
-                                            var event = ''
-                                            element.day_actions.forEach(el => {
-                                                event += `
-                                                <div class="chip chip-outline" style="background: ${el.events.create_event.background}">
-                                                    <div class="chip-label">${el.events.create_event.event}</div>
-                                                </div>`
-                                            });
-                                            page.find('.list ul').append($(`
-                                            <li class="listing-item" data-event-date="${today}" style="display: flex">
-                                                <a class="item-link item-content task-event" index="${index}" event="${element.pk}" 
-                                                    style=" padding-right: 16px;
-                                                            padding-right: 16px;
-                                                            border-width: 0px 5px 0px 0px;
-                                                            border-style: double;
-                                                            border-color: #f3f4f6;">
-                                                    <span class="material-icons">timeline</span></a>
-                                                <a href="${element.history[0].events.create_event.event_link}" class="item-link item-content" style="width: 100%;">
-                                                    <div class="item-inner">
-                                                        <div class="item-title-row">
-                                                        <div class="item-title">${element.title}</div>
-                                                        <div class="item-after">${today.toLocaleTimeString("ru-RU", options)}</div>
-                                                        </div>
-                                                        <div class="item-subtitle" style="margin-top: 7px;">${event}</div>
-                                                        <!--div class="item-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis
-                                                        tellus ut turpis condimentum, ut dignissim lacus tincidunt. Cras dolor metus, ultrices condimentum
-                                                        sodales sit amet, pharetra sodales eros. Phasellus vel felis tellus. Mauris rutrum ligula nec
-                                                        dapibus feugiat. In vel dui laoreet, commodo augue id, pulvinar lacus.</div-->
-                                                    </div>
-                                                </a>
-                                            </li>
-                                            `))
-                                            if (index + 1 == JSON.parse(request).length){
-                                                const items = [...document.querySelectorAll('.listing-item')];
-                                                items.sort(compare);
-                                                $('#tasks').empty();
-                                                items.forEach(item => {
-                                                    $('#tasks').prepend(item);
-                                                });
-                                            }
+                                    if (request.length > 0){
+                                        app.tasks = request
+                                        if (rangePicker){
+                                            range(request)
+                                        }else{
+                                            onlyday(request, page)
                                         }
                                     }else{
                                         page.find('.page-content').html(`
@@ -79,7 +157,7 @@ function task_list(page, date){
                                 function(request){
                                     ErrorProcessorRequest(request)
                                     app.dialog.close();
-                                }                                
+                                }, 'json'                                 
                             )
 }
 
@@ -168,7 +246,15 @@ calendar.push(
         detailRoutes: [
             {
                 path: '/today/',
-                content: `<div class="page"><div class="page-content"></div></div>
+                content: `<div class="page" >
+                            <div class="navbar" style="height: 47px;">
+                                <div class="navbar-bg"></div>
+                                <div class="navbar-inner">
+                                <div class="title"></div>
+                                </div>
+                            </div>
+                            <div class="page-content" style="padding-top: 46px;"></div>
+                        </div>
                 `,
                     on: {
                         pageBeforeIn: function (event, page) {
@@ -179,7 +265,7 @@ calendar.push(
                                 // do something when page initialized
 
                                 console.log('pageInit', 'today')
-                                task_list(page.$el, calendarInline.value[0])
+                                task_list(page.$el, calendarInline.value)
 
                                 page.$el.on('click', '.task-event', function(){
                                     let index = $(this).attr('index') 
@@ -268,17 +354,40 @@ calendar.push(
                         monthYearChangeStart: function (c) {
                                 $('.calendar-custom-toolbar .center').text(monthNames[c.currentMonth] + ', ' + c.currentYear);
                             },
+                        calendarChange: function(c){
+                            if (c.params.rangePicker) {
+                                if (c.value.length > 1){
+                                    app.dialog.preloader();
+                                    setTimeout(function(){
+                                            task_list($('#calendar .page-master-detail'), c.value, c.params.rangePicker)
+                                        }, 1000)
+                                }
+                            }else{
+                                app.dialog.preloader();
+                                setTimeout(function(){
+                                        task_list($('#calendar .page-master-detail'), c.value, c.params.rangePicker)
+                                        navigate(`/day/${c.value}`)
+                                    }, 1000)
+                            }
+                        },
                         dayClick: function(c){
-                            app.dialog.preloader();
-                            setTimeout(function(){
-                                    task_list($('#calendar .page-master-detail'), c.value[0])
-                                    //navigate(`/day/${c.value}`)
-                                }, 1000)
                             },
                         
                     }
                 });
                 
+                // Диапазан
+                app.toggle.create({
+                    el: '.toggleRangePicker',
+                    on: {
+                      change: function (e) {
+                        calendarInline.params.rangePicker = e.checked
+                      }
+                    }
+                  })
+
+                //
+
                 },
             pageBeforeRemove: function (event, page) {
                 }

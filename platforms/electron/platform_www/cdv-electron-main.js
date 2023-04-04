@@ -28,9 +28,7 @@ const {
     protocol,
     ipcMain,
     Tray,
-    Menu,
-    autoUpdater, 
-    dialog
+    Menu
 } = require('electron');
 
 // Electron settings from .json file.
@@ -137,6 +135,36 @@ function createWindow () {
                 )
                 version.setMenuBarVisibility(false)
                 version.loadFile('version.html')
+            }
+        }
+        ]
+    },
+    {
+        label: 'Конфигурации',
+        submenu: [
+        {
+            label: 'Модели',
+            click: async () => {
+                const version = new BrowserWindow(
+                    { 
+                        width: 800, 
+                        height: 600, 
+                        title: 'Модели', 
+                        icon: appIcon, 
+                        minimizable: true, 
+                        maximizable: true, 
+                        resizable: true,
+                        alwaysOnTop: false,
+                        parent: mainWindow,
+                        webPreferences :{
+                            devTools: true,
+                            nodeIntegration: true,
+                            contextIsolation: false
+                        },
+                    }
+                )
+                version.setMenuBarVisibility(false)
+                version.loadFile('drawflow.html')
             }
         }
         ]
