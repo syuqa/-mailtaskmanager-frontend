@@ -1,7 +1,7 @@
 directories:
-  output: C:\tmm\platforms\electron\build
-  buildResources: C:\tmm\platforms\electron\build-res
-  app: C:\tmm\platforms\electron\www
+  output: C:\tmm2\platforms\electron\build
+  buildResources: C:\tmm2\platforms\electron\build-res
+  app: C:\tmm2\platforms\electron\www
 appId: io.cordova.taskmanager
 productName: MailTaskManager
 electronVersion: 14.2.9

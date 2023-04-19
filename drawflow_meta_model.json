@@ -1,0 +1,278 @@
+{
+    "hash": "248a4ee183210fe03d14c8de6d313b43dce6dc27",
+    "data": {
+        "model": {
+            "id": 1,
+            "fields": {
+                "id": {
+                    "type": "integer",
+                    "verbose_name": "ID",
+                    "blank": true
+                },
+                "name": {
+                    "type": "string",
+                    "verbose_name": "Имя",
+                    "blank": false
+                },
+                "user": {
+                    "type": "integer",
+                    "verbose_name": "user",
+                    "blank": false
+                },
+                "description": {
+                    "type": "string",
+                    "verbose_name": "Описание",
+                    "blank": false
+                },
+                "visible": {
+                    "type": "bool",
+                    "verbose_name": "Виден всем",
+                    "blank": false
+                },
+                "mail_datatime_format": {
+                    "type": "string",
+                    "verbose_name": "Формат даты и времени почты",
+                    "blank": false
+                },
+                "position": {
+                    "type": "object",
+                    "verbose_name": "Позиция",
+                    "blank": true
+                }
+            },
+            "name": "model",
+            "group": "Основное компоненты",
+            "data": "model",
+            "description": "Модель",
+            "icon": "grid_view",
+            "classes": "model",
+            "html": "<div>\r\n            <div class=\"title-box\">\r\n                <div style=\"display: flex;\">\r\n                    <i class=\"title-icon material-icons\">grid_view</i>\r\n                    <font style=\"width: 100%;padding-right: 30px;\">Модель</font>\r\n                    <i class=\"material-icons open tooltip-init\" data-tooltip=\"Группа: двойнок щелчек по блоку.\" style=\"float: right;font-size: 18px;padding-top: 17px;margin-right: 10px;color:#80808066\">open_in_new</i>\r\n                </div>\r\n            </div>\r\n            <div class=\"box list\" style=\"padding: 0;margin: 0;background: none;\">\r\n                    <ul style=\"background: none;\">\r\n                        <li>\r\n                            <div class=\"item-content\">\r\n                                <div class=\"item-media\"><i class=\"icon material-icons\">lightbulb_outline</i></div>\r\n                                <div class=\"item-inner\">\r\n                                    <div class=\"item-after\"><input class=\"simple\" style=\"border: none\" type=\"text\" placeholder=\"Имя модели\" df-name=\"\"></div>\r\n                                </div>\r\n                            </div>\r\n                        </li>\r\n                        <li>\r\n                            <div class=\"item-content\">\r\n                                <div class=\"item-media\"><i class=\"icon material-icons\">notes</i></div>\r\n                                <div class=\"item-inner\">\r\n                                    <div class=\"item-after\"><input class=\"simple\" style=\"border: none\" type=\"text\" placeholder=\"Краткое описание\" df-description=\"\"></div>\r\n                                </div>\r\n                            </div>\r\n                        </li>\r\n                    </ul>\r\n                </div>\r\n          </div>",
+            "types": "drawflow",
+            "nodes": {
+                "rule": {}
+            },
+            "scheme": "Home",
+            "inputs": {
+                "inputs": 0,
+                "outputs": 1
+            },
+            "connect": {
+                "input": {},
+                "output": {
+                    "output_1": {
+                        "node": "mailconnector"
+                    }
+                }
+            },
+            "datamodel": "TaskModel"
+        },
+        "rule": {
+            "id": 2,
+            "fields": {
+                "id": {
+                    "type": "integer",
+                    "verbose_name": "ID",
+                    "blank": true
+                },
+                "name": {
+                    "type": "string",
+                    "verbose_name": "Имя",
+                    "blank": false
+                },
+                "connection_model": {
+                    "type": "integer",
+                    "verbose_name": "Модель",
+                    "blank": false
+                },
+                "enable": {
+                    "type": "bool",
+                    "verbose_name": "enable",
+                    "blank": false
+                },
+                "order_id": {
+                    "type": "integer",
+                    "verbose_name": "Приоритет",
+                    "blank": false
+                },
+                "stop_flag": {
+                    "type": "bool",
+                    "verbose_name": "Стоп флаг",
+                    "blank": false
+                },
+                "notification": {
+                    "type": "bool",
+                    "verbose_name": "Уведомление",
+                    "blank": false
+                },
+                "action": {
+                    "type": "integer",
+                    "verbose_name": "Действия",
+                    "blank": false
+                },
+                "action_parameters": {
+                    "type": "object",
+                    "verbose_name": "Дополнительные параметры",
+                    "blank": true
+                },
+                "position": {
+                    "type": "object",
+                    "verbose_name": "Позиция",
+                    "blank": true
+                }
+            },
+            "name": "rule",
+            "group": "Основное компоненты",
+            "data": "rule.email",
+            "description": "Правило обработки сообщений",
+            "icon": "playlist_play",
+            "classes": "rule",
+            "html": "<div>\r\n                <div class=\"title-box\"></div>\r\n                <div class=\"box list\" style=\"padding: 0;margin: 0;background: none;\">\r\n                        <ul style=\"background: none;\">\r\n                            <li style=\"width: auto;\">\r\n                                <div class=\"item-content\">\r\n                                    <div class=\"item-inner\" style=\"min-width: 200px;\">\r\n                                        <div class=\"item-title simple\"><input style=\"border: none\" type=\"text\" placeholder=\"Новое правило\" df-name></div>\r\n                                        <div class=\"item-after\">\r\n                                            <label class=\"toggle toggle-init color-green\"><input class=\"simple\" type=\"checkbox\" name=\"enable\" df-enable/><span class=\"toggle-icon\"></span></label>\r\n                                        </div>\r\n                                    </div>\r\n                                </div>\r\n                            </li>\r\n                        </ul>\r\n\r\n                        <div class=\"popup rule-popup\" style=\"display:none;\">\r\n                        \r\n                            <div class=\"view\">\r\n                                <div class=\"page\">\r\n                                    <div class=\"navbar\"></div>\r\n\r\n                                    <div class=\"page-content\">\r\n                                        <div class=\"list inline-labels no-hairlines-md\">\r\n                                            <ul>\r\n                                                <li class=\"item-content item-input\">\r\n                                                    <div class=\"item-inner\">\r\n                                                        <div class=\"item-title item-label\">Имя</div>\r\n                                                        <div class=\"item-input-wrap\">\r\n                                                            <input class=\"validate\" type=\"text\" placeholder=\"simple\" name=\"name\"/>\r\n                                                        </div>\r\n                                                    </div>\r\n                                                </li>\r\n                                                <li class=\"item-content item-input\">\r\n                                                    <div class=\"item-inner\">\r\n                                                        <div class=\"item-title item-label\">Стоп флаг</div>\r\n                                                        <div class=\"item-input-wrap\">\r\n                                                            <label class=\"toggle toggle-init color-green\" style=\"float: right;\">\r\n                                                                <input name=\"stop_flag\" type=\"checkbox\">\r\n                                                                <span class=\"toggle-icon\"></span>\r\n                                                            </label>\r\n                                                        </div>\r\n                                                    </div>\r\n                                                </li>\r\n                                                <li class=\"item-content item-input\">\r\n                                                    <div class=\"item-inner\">\r\n                                                        <div class=\"item-title item-label\">Уведомление</div>\r\n                                                        <div class=\"item-input-wrap\">\r\n                                                            <label class=\"toggle toggle-init color-green\" style=\"float: right;\">\r\n                                                                <input name=\"notification\" type=\"checkbox\">\r\n                                                                <span class=\"toggle-icon\"></span>\r\n                                                            </label>\r\n                                                        </div>\r\n                                                    </div>\r\n                                                </li>\r\n                                            </ul>\r\n                                        </div>                                \r\n                                    </div>\r\n\r\n                                </div>\r\n                            </div>\r\n                        </div>\r\n                </div>\r\n            </div>",
+            "types": "data",
+            "nodes": {},
+            "scheme": "model",
+            "inputs": {
+                "inputs": 0,
+                "outputs": 1
+            },
+            "connect": {
+                "input": {},
+                "output": {}
+            },
+            "datamodel": "TaskModelMailRule"
+        },
+        "mailconnector": {
+            "id": 3,
+            "fields": {
+                "id": {
+                    "type": "integer",
+                    "verbose_name": "ID",
+                    "blank": true
+                },
+                "connection_model": {
+                    "type": "integer",
+                    "verbose_name": "connection model",
+                    "blank": true
+                },
+                "user": {
+                    "type": "integer",
+                    "verbose_name": "Пользователь",
+                    "blank": false
+                },
+                "host": {
+                    "type": "string",
+                    "verbose_name": "Хост",
+                    "blank": false
+                },
+                "port": {
+                    "type": "integer",
+                    "verbose_name": "Порт",
+                    "blank": false
+                },
+                "username": {
+                    "type": "string",
+                    "verbose_name": "Логин",
+                    "blank": false
+                },
+                "password": {
+                    "type": "string",
+                    "verbose_name": "Пароль",
+                    "blank": false
+                },
+                "tls": {
+                    "type": "bool",
+                    "verbose_name": "TSL",
+                    "blank": false
+                },
+                "load_interval": {
+                    "type": "integer",
+                    "verbose_name": "Интервал между чтением",
+                    "blank": false
+                },
+                "enable": {
+                    "type": "bool",
+                    "verbose_name": "Активно",
+                    "blank": false
+                },
+                "debug": {
+                    "type": "bool",
+                    "verbose_name": "Дебаг режим",
+                    "blank": false
+                },
+                "next_th": {
+                    "type": "integer",
+                    "verbose_name": "Счетчик запусков",
+                    "blank": false
+                },
+                "path": {
+                    "type": "string",
+                    "verbose_name": "Папка",
+                    "blank": false
+                },
+                "itegrations": {
+                    "type": "integer",
+                    "verbose_name": "Интеграции",
+                    "blank": true
+                },
+                "itegration_paramets_system": {
+                    "type": "object",
+                    "verbose_name": "Системные параметры интеграций",
+                    "blank": true
+                },
+                "itegration_paramets": {
+                    "type": "object",
+                    "verbose_name": "Параметры интеграций",
+                    "blank": true
+                },
+                "smtp": {
+                    "type": "bool",
+                    "verbose_name": "Отправка почтовых сообщений",
+                    "blank": false
+                },
+                "smtphost": {
+                    "type": "string",
+                    "verbose_name": "Сервер исходящих сообщений",
+                    "blank": true
+                },
+                "smtport": {
+                    "type": "integer",
+                    "verbose_name": "Порт исходящих сообщений",
+                    "blank": true
+                },
+                "smtpssl": {
+                    "type": "bool",
+                    "verbose_name": "SSL",
+                    "blank": false
+                },
+                "position": {
+                    "type": "object",
+                    "verbose_name": "Позиция",
+                    "blank": true
+                }
+            },
+            "name": "mailconnector",
+            "group": "Основное компоненты",
+            "data": "connector.mail",
+            "description": "Почтовый сервер",
+            "icon": "mail_outline",
+            "classes": "mailconnector",
+            "html": "<div>\r\n                <div class=\"title-box\"></div>\r\n    \r\n                <div class=\"box node-email-connector\" style=\"padding: 0px;\">\r\n                    <div class=\"list\" style=\"width: auto;margin-top: 0px;margin-bottom: 0px;\">\r\n                        <ul style=\"background: none;\">\r\n                            <li>\r\n                                <div class=\"item-content\">\r\n                                    <div class=\"item-media\"><i class=\"icon material-icons\">mail_outline</i></div>\r\n                                    <div class=\"item-inner\">\r\n                                        <div class=\"item-after simple\"><input style=\"border: none;width: 260px;\" type=\"text\" placeholder=\"Почтовый сервер\" df-host /></div>\r\n                                    </div>\r\n                                </div>\r\n                            </li>\r\n                            <li>\r\n                                <div class=\"item-content\">\r\n                                    <div class=\"item-media\"><i class=\"icon material-icons\">alternate_email</i></div>\r\n                                    <div class=\"item-inner\">\r\n                                        <div class=\"item-after simple\"><input style=\"border: none;width: 260px;\" type=\"text\" placeholder=\"exemple@yandex.ru\" df-username  /></div>\r\n                                    </div>\r\n                                </div>\r\n                            </li>\r\n                        </ul>\r\n                    </div>\r\n                </div>\r\n            </div>",
+            "types": "data",
+            "nodes": {},
+            "scheme": "Home",
+            "inputs": {
+                "inputs": 1,
+                "outputs": 0
+            },
+            "connect": {
+                "input": {
+                    "input_1": {
+                        "node": "model",
+                        "field": "connection_model"
+                    }
+                },
+                "output": {}
+            },
+            "datamodel": "DataMailConnection"
+        }
+    }
+}

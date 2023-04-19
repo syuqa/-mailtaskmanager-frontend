@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap');
 
+
 /* iOS Cordova Tweak */
 .device-cordova.device-ios {
   height: 100vh;
@@ -124,8 +125,10 @@
 
 .shroud {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 1000%;
+  height: 1000%;
+  top: -100%;
+  left: -100%;
   background: #ffffff8c;
   z-index: 10;
 }
@@ -173,3 +176,117 @@
   border: none ;
 }
 */
+
+.title-box .rollback {
+  float: right;
+  padding-top: 12px;
+  margin-right: 10px;
+  color: red;
+  display: none
+}
+
+.title-box .done {
+  float: right;
+  padding-top: 12px;
+  margin-right: 10px;
+  color: green;
+  display: none
+}
+
+.title-box .edit {
+  float: right;
+  padding-top: 12px;
+  margin-right: 10px;
+  color:#80808066
+}
+
+.title-box .name {
+  width: 100%;
+  padding-right: 30px;
+}
+
+.title-box .preloader-inner {
+  width: 20px;
+  height: 20px;
+  top: 15px;
+  left: -10px;
+}
+
+.box {
+  padding: 0;
+  margin: 0;
+  background: none;
+}
+
+.button-draft {
+  float: right;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: white;
+  font-weight: bold;
+  border: 1px solid darkgray;
+  background: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.button-publish {
+  float: right;
+  position: absolute;
+  top: 10px;
+  right: 155px;
+  color: white;
+  border: 1px solid darkgray;
+  background: #4cd964;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 5;
+  display: none;
+}
+
+.menu .breadcrumbs {
+  padding-left: 10px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  background: #f7f7f7;
+}
+
+.node-group {
+  font-weight: 100;
+  color: #80808075;
+  font-size: 16px;
+  display: flex;
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+.node-group-title {
+    float: right;
+    width: 100%;
+    text-align: center;
+}
+
+.node-group-icon {
+  font-size: 22px !important;
+  float: right;
+}
+
+.drawflow .list ul:before{
+  height: 0px !important;
+}
+
+.drawflow_content_node .item-content {
+  background: #f7f7f7;
+}
+
+.drawflow_content_node .item-inner {
+  background: white;
+}
+
+.drawflow .inputs{
+  z-index: 10;
+
+}
