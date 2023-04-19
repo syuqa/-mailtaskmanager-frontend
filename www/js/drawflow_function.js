@@ -14,6 +14,36 @@ function toast_done(){
 toastIcon.open();
 }
 
+// Дополенение шаблона
+function examinationSpecHtml(spec){
+  let el = $(spec.html)
+  // Заголовок
+  let title = el.find('.title-box')
+  console.log(title[0].childElementCount)
+  try{
+    console.log(title, title.childElementCount)
+  if (title[0].childElementCount == 0){
+    title.html(`
+    <div style="display: flex;">
+        <i class="title-icon material-icons">${spec.icon}</i>
+        <font style="width: 100%;padding-right: 30px;">${spec.description}</font>
+        <div class="preloader publish color-blue" style="display:none">
+            <span class="preloader-inner" style="width: 20px;height: 20px;top: 15px;left: -10px;">
+                <span class="preloader-inner-circle"></span>
+            </span>
+        </div>
+        <a class="material-icons rollback link" style="float: right;padding-top: 12px;margin-right: 10px;color: red;display: none">close</a>
+        <a class="material-icons done create-model link" style="float: right;padding-top: 12px;margin-right: 10px;color: green;display: none">done</a>
+        <i class="material-icons open tooltip-init" data-tooltip="Группа: двойнок щелчек по блоку." style="float: right;font-size: 18px;padding-top: 17px;margin-right: 10px;color:#80808066">open_in_new</i>
+    </div>
+    `)
+  }
+  }catch(err){
+    console.log(err)
+  }
+  return el.html()
+}
+
 // переход
 function navigate(path, reload=true){
   return app.view.current.router.navigate(path, 
@@ -28,9 +58,10 @@ function navigate(path, reload=true){
 
 // Валидация полей
 function validate(el){
+    console.log('validate')
     var count_validate = 0
     var current_num_validate = 0
-    var input_items = el.find('input.validate')
+    var input_items = [...el.find('input.validate'), ...el.find('textarea.validate')]
     input_items.forEach(function(item){
       count_validate += 1
       var len = $(item).attr('validate_length')
@@ -74,12 +105,11 @@ function publish(data, url, resolve, reject){
         text: text,
         closeButton: true,
       })
-
       note.open()
   }
 
   // api/data/connection/mail/connector
-  let id = data.id
+  let id = data.id || -1
   let publish_data = data
     delete publish_data.id
     delete publish_data.index
@@ -91,8 +121,8 @@ function publish(data, url, resolve, reject){
       {
         url: app_api(`${url}/${id}`),
         method: "PATCH",
-        CataType: 'json',
-        ContentType: 'application/json',
+        dataType: 'json',
+        contentType: 'application/json',
         data: publish_data,
         statusCode: {
           200: function (xhr) {
@@ -111,6 +141,21 @@ function publish(data, url, resolve, reject){
           },
           502: function(xhr){
             badGatewayMessage('Ошибка публикации', 'Сервер недоступен')
+            reject(xhr)
+          },
+          400: function(xhr){
+            console.log(xhr)
+            let message = new String()
+            try{
+              Object.entries(JSON.parse(xhr.response)).forEach((key, value) => {
+                message += `${key}: ${value}`
+              })
+            }catch(e){
+                message = xhr.response
+            }
+            console.log(message)
+            
+            badGatewayMessage('Ошибка публикации', message)
             reject(xhr)
           },
           401: function(xhr){
@@ -164,25 +209,22 @@ $(document).on('click', '.drawflow-node .done', function(){
       }
   let node_data_index = node.data.index
   let spec = nodeSpecification(node.name)
-  switch (node.name) {
-    case 'mailconnector':
-      publish(node_data, spec.api, function(request, notification){
-        notification.open()
-        console.log(request)
-        done()
-      }, error)
-  }
+      
+  publish(node_data, spec.api, function(request, notification){
+    notification.open()
+    console.log(request)
+    done()
+  }, error)
 })
 
 
 // Двойной клик
 $(document).on('dblclick', '.drawflow-node', function(){
-  let node = app.editor.getNodeFromId(app.node_selected_id)
-  openSetting(node)
+  openSetting()
 })
 
 // Список компонентов
-function component_list(name="Home"){
+function component_list_2(name="Home"){
       $(".wrapper .col").html('')
         try{
             let names = name.includes("_") ? name.split('_').shift(): name
@@ -207,30 +249,155 @@ function component_list(name="Home"){
 }
 
 // d 
-function openSetting(node){
-  let spec = nodeSpecification(node.name)
-  if (spec.type == 'data'){
-    if (spec.dataform.type === 'custom-popup'){
-        app.popup.create(spec.dataform.data(node.data)).open()
-    }else if (spec.dataform.type === 'popup'){
-      console.log('open popup')
+function openSetting(){
+  console.log(app.node_selected_id)
+  
+  let node = app.editor.getNodeFromId(app.node_selected_id)
+  let meta = app.drawflow.meta.data
+  
+  if (node.typedata == 'data'){
+    if (meta.dataform.type === 'custom-popup'){
+        app.popup.create(meta.dataform.data(node.data)).open()
+    }else if (meta.dataform.type === 'popup'){
+      $(`#node-${app.node_selected_id} ${meta.dataform.data.el}`).addClass(`popup-${app.node_selected_id}`)
       app.popup.create({
-        el: spec.dataform.data.el,
+        el: `.popup-${app.node_selected_id}`,
         swipeToClose: true,
-        on: spec.dataform.data.on
+        on: {
+          open: function (popup) {
+            // Заполняем
+            popup.$el.find('input, select, textarea').forEach(el => {
+              if (el.name && Object.keys(node.data).includes(el.name)){
+                if (el.localName === 'input' && el.type === 'checkbox'){
+                  el.checked = node.data[el.name]
+                }else{
+                  el.value = node.data[el.name]
+                  $(el).change()
+                  if (el.localName === 'select'){
+                    
+                  }
+                }
+              }
+            })
+            // Навбар
+            popup.$el.find('.navbar').html(`
+                    <div class="navbar-bg"></div>
+                    <div class="navbar-inner navbar-inner-centered-title">
+                        <div class="left">
+                            <label class="toggle toggle-init edit color-black">
+                                <input type="checkbox" checked/>
+                                <span class="toggle-icon"></span>
+                            </label>
+                        </div>
+                        <div class="title" style="left: 250.5px;">${meta.description}</div>
+                        <div class="right">
+                            <a href="#" style="display: none" class="link save popup-close required-validate" validate="false">Готово</a>
+                            <a href="#" class="link popup-close close" >Закрыть</a>
+                        </div>
+                    </div>`)
+
+            // Черновик
+            console.log(node)
+            let node_data_id = node.data.id || -1
+            if (node_data_id != -1){
+              popup.$el.find('label.edit input').forEach(el => {el.checked = false})
+              popup.$el.find('li .item-input-wrap').addClass('simple')
+            }else{
+              console.log(popup.$el.find('.edit'))
+              popup.$el.find('.edit').css('display', 'none')
+            }
+
+            // Проверка заполнености обязателных полей
+            popup.$el.on('input', 'ul .validate', function(){
+              validate(popup.$el)
+            })
+
+            // Изменение
+            popup.$el.on('click', 'a.save', function(){
+              let data = new Object()
+              // input
+
+              for (const el of popup.$el.find('input')){
+                if (el.name){
+                  if (el.type === 'text'){
+                    data[el.name] = el.value
+                  }else if (el.type === 'checkbox'){
+                    data[el.name] = $(el).is(':checked')
+                  }
+                }
+              }
+              // select
+              for (const el of popup.$el.find('select')){
+                if (el.name){
+                  data[el.name] = el.value
+                }
+              }
+              
+              app.editor.updateNodeDataFromId(app.node_selected_id, {...node.data, ...data})
+
+              // Активация кнопок публикации изменений
+              if (node.data.id != -1){
+                $(`#node-${app.node_selected_id}`).css('z-index', 100)
+                $(`#node-${app.node_selected_id} .done`).css('display', '')
+                $(`#node-${app.node_selected_id} .edit`).css('display', 'none')
+                $(`#node-${app.node_selected_id} .rollback`).css('display', '')
+                $('.drawflow').append($('<div class="shroud shroud-node"></div>'))
+                block(true)
+            }
+            app.popup.close()
+            })
+
+
+            // Публикация
+            popup.$el.on('click', 'label.edit input', function(){
+              if ($(this).is(':checked')){
+                popup.$el.find('a.close').css('display', 'none')
+                popup.$el.find('a.save').css('display', '')
+                popup.$el.find('li .item-input-wrap').removeClass('simple')
+              }else{
+                popup.$el.find('a.close').css('display', '')
+                popup.$el.find('a.save').css('display', 'none')
+                popup.$el.find('li .item-input-wrap').addClass('simple')
+              }
+            })
+
+            // 
+            popup.$el.on('change', 'input[type="checkbox"]', function(){
+              validate(popup.$el)
+            })
+
+            popup.$el.on('change', '.smart-select select', function(){
+              validate(popup.$el)
+            })
+
+          }
+        }
       }).open()
     }
-  }else if (spec.type == 'drawflow'){
-    if ($(`#node-${app.node_selected_id} .open`).css('display') != 'none'){
-      if ($(`.wrapper .menu li[module="${node.data.id}"]`).length == 0){
-        app.editor.addModule(`model_${node.data.id}`);
-          $('.wrapper .menu ul').append(`
-            <li module="${node.data.id}" onclick="app.editor.changeModule('model_${node.data.id}'); changeModule(event);"><i class="material-icons icon" style="font-size: 18px;">${spec.icon}</i> ${node.data.name}</li>
-          `)
-        }
-        $(`li[module="${node.data.id}"]`).click()
-    }
-  }
+  }else if (node.typedata == 'drawflow'){
+    
+    $('.menu .breadcrumbs .b-item').forEach(el => {
+      if ( parseInt($(el).attr('index')) >= parseInt(node.level)){
+        $(el).remove()
+      }
+    })
+
+    let lnk = $(`
+      <div class="b-item" index="${node.level}" style="display: flex;padding-left: 10px;">
+          <div class="breadcrumbs-separator"></div>
+            <div class="breadcrumbs-item" style="margin-left: 0px;padding-left: 10px;color:black">
+              <a href="#" class="link" module="${node.name}/${node.id}">
+                <span>${node.data.name}</span>
+              </a>
+            </div>
+      </div>`)
+
+    console.log($('.menu .breadcrumbs'))
+    $('.menu .breadcrumbs').append(lnk)
+    $('.menu .breadcrumbs .breadcrumbs-item[index="0"]').css('color', 'var(--f7-breadcrumbs-item-color)')
+    app.editor.changeModule(`${node.name}/${node.id}`);
+
+  } 
 }
 
 // Генерация домашний старницы
@@ -265,13 +432,13 @@ function create_home_node(eldata){
     // модели
     for (const [index, model] of eldata.model.entries()){
       let spec = nodeSpecification('model')
-      app.editor.addNode('model', spec.inputs.in,  spec.inputs.to, model.position.pos_x, model.position.pos_y, spec.class, data(spec, model, index), spec.html );
+      app.editor.addNode('model', spec.inputs.in,  spec.inputs.to, model.position.pos_x, model.position.pos_y, spec.class, data(spec, model, index), examinationSpecHtml(spec));
     }
   
     // connector 
     for (const [index, mail] of eldata.connector.mail.entries()){
       let spec = nodeSpecification('mailconnector')
-      let connector_node = app.editor.addNode('mailconnector', spec.inputs.in,  spec.inputs.to, mail.position.pos_x, mail.position.pos_y, spec.class, data(spec, mail, index), spec.html );
+      let connector_node = app.editor.addNode('mailconnector', spec.inputs.in,  spec.inputs.to, mail.position.pos_x, mail.position.pos_y, spec.class, data(spec, mail, index), examinationSpecHtml(spec));
       // cоеденяем с моделью
       if (mail.connection_model) {
         let model = mail.connection_model.id

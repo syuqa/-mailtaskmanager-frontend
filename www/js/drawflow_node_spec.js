@@ -9,6 +9,7 @@ function nodeSpecification(nodename=undefined){
             icon: 'grid_view',
             pages: ['Home'],
             type: 'drawflow',
+            nodes: {rule: "rule.email"},
             inputs: {
                 in: 0,
                 to: 1,
@@ -16,7 +17,7 @@ function nodeSpecification(nodename=undefined){
                     in: {
                         1: {nodename: 'mailconnector', field: 'connection_model'}
                     },
-                    to: {
+                    ou: {
 
                     }
                 }
@@ -35,22 +36,12 @@ function nodeSpecification(nodename=undefined){
             <div class="title-box">
                 <div style="display: flex;">
                     <i class="title-icon material-icons">grid_view</i>
-                    <font style="width: 100%;">Модель</font>
-                    <div class="preloader publish color-blue" style="display:none">
-                        <span class="preloader-inner" style="width: 20px;height: 20px;top: 15px;left: -10px;">
-                            <span class="preloader-inner-circle"></span>
-                        </span>
-                    </div>
-                    <a class="material-icons rollback link" style="float: right;padding-top: 12px;margin-right: 10px;color: red;display: none">close</a>
-                    <a class="material-icons done create-model link" style="float: right;padding-top: 12px;margin-right: 10px;color: green;display: none">done</a>
+                    <font style="width: 100%;padding-right: 30px;">Модель</font>
                     <i class="material-icons open tooltip-init" data-tooltip="Группа: двойнок щелчек по блоку." style="float: right;font-size: 18px;padding-top: 17px;margin-right: 10px;color:#80808066">open_in_new</i>
                 </div>
             </div>
             <div class="box list" style="padding: 0;margin: 0;background: none;">
                     <ul style="background: none;">
-                        <li style="display: none">
-                            <input class="" style="border: none" value="-1" type="number" placeholder="Имя модели" df-id="">
-                        </li>
                         <li>
                             <div class="item-content">
                                 <div class="item-media"><i class="icon material-icons">lightbulb_outline</i></div>
@@ -70,7 +61,28 @@ function nodeSpecification(nodename=undefined){
                     </ul>
                 </div>
           </div>
-          `
+          `,
+        header: {
+          block: `
+          <div>
+            <div class="title-box">
+                  <div style="display: flex;">
+                      <i class="title-icon material-icons">tips_and_updates</i>
+                      <font style="width: 100%;">Информация о модели</font>
+                  </div>
+            </div>
+            <div class="box list" style="padding: 0;margin: 0;background: none;">
+            <div class="block-title"><input class="simple" style="border: none" type="text" df-name=""></div>
+            <div class="block-header"><input class="simple" style="border: none" type="text" df-description=""></div>
+            </div>
+          </div>
+          `,
+          type: "data",
+          dataform: {
+            type: "popup-table",
+            html: ``
+          }
+        }
         },
         mailconnector: {
             class: 'mailconnector',
@@ -110,7 +122,7 @@ function nodeSpecification(nodename=undefined){
                 <div class="title-box">
                     <div style="display: flex;">
                         <i class="title-icon material-icons">alternate_email</i>
-                        <font style="width: 100%;">Почтовый сервис</font>
+                        <font style="width: 100%;padding-right: 30px;">Почтовый сервис</font>
                         <div class="preloader publish color-blue" style="display:none">
                             <span class="preloader-inner" style="width: 20px;height: 20px;top: 15px;left: -10px;">
                                 <span class="preloader-inner-circle"></span>
@@ -155,7 +167,7 @@ function nodeSpecification(nodename=undefined){
                              <div class="view view-popup">
                    
                                <!-- titlebar -->
-                               <div class="navbar queue-popup">
+                               <div class="navbar">
                                    <div class="navbar-bg"></div>
                                    <div class="navbar-inner navbar-inner-centered-title">
                                        <div class="left">
@@ -421,7 +433,7 @@ function nodeSpecification(nodename=undefined){
             type: 'data',
             description: 'Атрибут',
             icon: 'data_object',
-            pages: ['model'],
+            pages: [''],
             inputs: {
                 in: 0,
                 to: 1,
@@ -447,7 +459,7 @@ function nodeSpecification(nodename=undefined){
                 <div class="title-box">
                     <div style="display: flex;">
                         <i class="title-icon material-icons">data_object</i>
-                        <font style="width: 100%;">Атрибут</font>
+                        <font style="width: 100%;padding-right: 30px;">Атрибут</font>
                         <div class="preloader publish color-blue" style="display:none">
                             <span class="preloader-inner" style="width: 20px;height: 20px;top: 15px;left: -10px;">
                                 <span class="preloader-inner-circle"></span>
@@ -464,13 +476,13 @@ function nodeSpecification(nodename=undefined){
                                 <div class="item-content">
                                     <div class="item-inner" style="min-width: 200px;">
                                         <div class="item-title simple"><input style="border: none" type="text" placeholder="Новый атрибут" df-description></div>
-                                        <div class="item-after "><input style="border: none;text-align: right;" type="text" placeholder="simple" df-description></div>
+                                        <div class="item-after simple"><input style="border: none;text-align: right;" type="text" placeholder="simple" df-Attribute></div>
                                     </div>
                                 </div>
                             </li>
                         </ul>
                         
-                        <div class="popup attr-popup model" style="display:none;">
+                        <div class="popup attr-popup" style="display:none;">
                         
                             <div class="view">
                                 <div class="page">
@@ -492,7 +504,7 @@ function nodeSpecification(nodename=undefined){
                                                     <div class="item-inner">
                                                         <div class="item-title item-label">Системное имя</div>
                                                         <div class="item-input-wrap">
-                                                            <input type="text" placeholder="simple" name="Attribute"/>
+                                                            <input class="validate" type="text" placeholder="simple" name="Attribute"/>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -500,7 +512,7 @@ function nodeSpecification(nodename=undefined){
                                                     <div class="item-inner">
                                                         <div class="item-title item-label">Описание</div>
                                                         <div class="item-input-wrap">
-                                                            <input type="text" placeholder="Новый атрибут" name="description"/>
+                                                            <input class="validate" type="text" placeholder="Новый атрибут" name="description"/>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -520,13 +532,11 @@ function nodeSpecification(nodename=undefined){
                                                 <li>
                                                     <a class="item-link smart-select smart-select-init" data-open-in="popup">
                                                         <select name="search_in">
-                                                            <option value="apple">Apple</option>
-                                                            <option value="pineapple">Pineapple</option>
-                                                            <option value="pear">Pear</option>
-                                                            <option value="orange">Orange</option>
-                                                            <option value="melon">Melon</option>
-                                                            <option value="peach">Peach</option>
-                                                            <option value="banana">Banana</option>
+                                                            <option value="body-html" selected>Содержание в формате html</option>
+                                                            <option value="from">Адресат</option>
+                                                            <option value="body-text">Содержание в виде текста</option>
+                                                            <option value="subject">Тема</option>
+                                                            <option value="date">Дата</option>
                                                         </select>
                                                         <div class="item-content">
                                                             <div class="item-inner">
@@ -540,7 +550,7 @@ function nodeSpecification(nodename=undefined){
                                                     <div class="item-inner">
                                                         <div class="item-title item-label">Вырожение</div>
                                                         <div class="item-input-wrap">
-                                                            <textarea name="parser" class="resizable" placeholder="Bio"></textarea>
+                                                            <textarea name="parser" class="resizable validate" placeholder="Bio"></textarea>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -560,10 +570,11 @@ function nodeSpecification(nodename=undefined){
             class: 'rule',
             api: 'api/data/connection/mail/model/rules',
             description: 'Правило обработки сообщений',
-            icon: 'data_object',
+            type: 'data',
+            icon: 'playlist_play',
             pages: ['model'],
             inputs: {
-                in: 1,
+                in: 0,
                 to: 1,
                 connect: { 
                     in: {
@@ -585,19 +596,7 @@ function nodeSpecification(nodename=undefined){
             },
             html: `
                 <div>
-                <div class="title-box">
-                    <div style="display: flex;">
-                        <i class="title-icon material-icons">data_object</i>
-                        <font style="width: 100%;">Правило обработки сообщений</font>
-                        <div class="preloader publish color-blue" style="display:none">
-                            <span class="preloader-inner" style="width: 20px;height: 20px;top: 15px;left: -10px;">
-                                <span class="preloader-inner-circle"></span>
-                            </span>
-                        </div>
-                        <a class="material-icons rollback link" style="float: right;padding-top: 12px;margin-right: 10px;color: red;display: none">close</a>
-                        <a class="material-icons done create-model link" style="float: right;padding-top: 12px;margin-right: 10px;color: green;display: none">done</a>
-                        <i class="material-icons edit tooltip-init" data-tooltip="Набор параметров.Двойной клик, отрывает параметры" style="float: right;padding-top: 12px;margin-right: 10px;color:#80808066">edit_note</i>                </div>
-                </div>
+                <div class="title-box"></div>
                 <div class="box list" style="padding: 0;margin: 0;background: none;">
                         <ul style="background: none;">
                             <li style="width: auto;">
@@ -605,25 +604,74 @@ function nodeSpecification(nodename=undefined){
                                     <div class="item-inner" style="min-width: 200px;">
                                         <div class="item-title simple"><input style="border: none" type="text" placeholder="Новое правило" df-name></div>
                                         <div class="item-after">
-                                            <label class="toggle toggle-init edit color-green"><input type="checkbox" df-enable checked/><span class="toggle-icon"></span></label>
+                                            <label class="toggle toggle-init color-green"><input class="simple" type="checkbox" name="enable" df-enable/><span class="toggle-icon"></span></label>
                                         </div>
                                     </div>
                                 </div>
                             </li>
                         </ul>
-                    </div>
+
+                        <div class="popup rule-popup" style="display:none;">
+                        
+                            <div class="view">
+                                <div class="page">
+                                    <div class="navbar"></div>
+
+                                    <div class="page-content">
+                                        <div class="list inline-labels no-hairlines-md">
+                                            <ul>
+                                                <li class="item-content item-input">
+                                                    <div class="item-inner">
+                                                        <div class="item-title item-label">Имя</div>
+                                                        <div class="item-input-wrap">
+                                                            <input class="validate" type="text" placeholder="simple" name="name"/>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li class="item-content item-input">
+                                                    <div class="item-inner">
+                                                        <div class="item-title item-label">Стоп флаг</div>
+                                                        <div class="item-input-wrap">
+                                                            <label class="toggle toggle-init color-green" style="float: right;">
+                                                                <input name="stop_flag" type="checkbox">
+                                                                <span class="toggle-icon"></span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li class="item-content item-input">
+                                                    <div class="item-inner">
+                                                        <div class="item-title item-label">Уведомление</div>
+                                                        <div class="item-input-wrap">
+                                                            <label class="toggle toggle-init color-green" style="float: right;">
+                                                                <input name="notification" type="checkbox">
+                                                                <span class="toggle-icon"></span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>                                
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                </div>
             </div>
-                `
+                `,
+            dataform: {"type": "popup", data: {el: ".rule-popup", on: {}}}
         }, 
-        test: {
-            class: 'test',
+        action: {
+            class: 'action',
             api: 'api/data/connection/mail/model/rules',
-            description: 'Бок для тестов',
-            icon: 'data_object',
+            description: 'Cобытие',
+            type: "data",
+            icon: 'play_circle_outline',
             pages: ['model'],
             inputs: {
                 in: 1,
-                to: 1,
+                to: 0,
                 connect: { 
                     in: {
                     },
@@ -644,18 +692,21 @@ function nodeSpecification(nodename=undefined){
             },
             html:
             `<div>
-            <div class="title-box"><i class="fas fa-mouse"></i> Db Click</div>
-              <div class="box dbclickbox" ondblclick="showpopup(event)">
-                Db Click here
-                <div class="modal" style="display:none">
-                  <div class="modal-content">
-                    <span class="close" onclick="closemodal(event)">&times;</span>
-                    Change your variable {name} !
-                    <input type="text" df-name>
+            <div class="title-box"></div>
+                <div class="box list" style="padding: 0;margin: 0;background: none;">
+                        <ul style="background: none;">
+                            <li style="width: auto;">
+                                <div class="item-content">
+                                    <div class="item-inner" style="min-width: 200px;">
+                                        <div class="item-title simple"><input style="border: none" type="text" placeholder="Новое правило" df-name></div>
+                                        <div class="item-after">
+                                            <label class="toggle toggle-init color-green"><input class="simple" type="checkbox" name="enable" df-enable/><span class="toggle-icon"></span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
                   </div>
-
-                </div>
-              </div>
             </div>`
         }
     }
